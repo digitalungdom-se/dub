@@ -1,0 +1,38 @@
+{
+  "name": "dud-bot",
+  "version": "1.0.0",
+  "description": "A discord bot for the digital ungdom server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kelszo/dud-bot.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "digital_ungdom"
+  ],
+  "author": "Kelvin Szolnoky, Digital Ungdom",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/kelszo/dud-bot/issues"
+  },
+  "homepage": "https://github.com/kelszo/dud-bot#readme",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "dotenv": "^7.0.0",
+    "fs-extra": "^7.0.1",
+    "node-opus": "^0.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-security": "^1.4.0"
+  },
+  "engines": {
+    "node": ">=11.14.0"
+  }
+}
