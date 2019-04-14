@@ -5,6 +5,7 @@ module.exports = {
   group: 'misc',
   usage: 'slap <medlem>',
   execute(message, args) {
+    if(args.length === 0) return message.reply('Du måste ge mig ett namn för att smiska.')
     const name = args[0].toLowerCase();
 
     const members = {
