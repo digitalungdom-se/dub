@@ -8,6 +8,7 @@ A discord bot for digital ungdom
 2. **ping**: replies with pong
 3. **slap**: slaps one of the board members (kelvin|simon|douglas)
 4. **version**: replies with the current version of the bot
+5. **logo**: sends the current server logo
 
 ### future
 1. **music**: some music commands

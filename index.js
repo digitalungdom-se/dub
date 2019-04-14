@@ -55,6 +55,7 @@ client.on('message', message => {
     command.execute(message, args);
   } catch (error) {
     message.reply(`En error uppstog med commandot ${message.content}`);
+    console.error(error);
   }
 });
 
