@@ -1,6 +1,6 @@
 /* global include */
 
-const version = (include('package.json')).version;
+const version = ( include( 'package.json' ) ).version;
 
 module.exports = {
   name: 'version',
@@ -8,7 +8,7 @@ module.exports = {
   aliases: [],
   group: 'misc',
   usage: 'version',
-  execute(message, args) {
-    message.reply(`Den nuvarande versionen av botten är: **${version}**`);
+  execute( message, args ) {
+    message.reply( `Den nuvarande versionen av botten är: **${version}**` );
   },
 };
