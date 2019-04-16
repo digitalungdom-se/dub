@@ -17,7 +17,7 @@ module.exports = {
 
     if ( !args.length ) {
       data.push( 'Här är en lista av alla kommandon jag kan göra:\n' );
-      commands.map( function( command ) {
+      commands.map( function ( command ) {
         if ( !listFormatting[ command.group ] ) listFormatting[ command.group ] = [];
         listFormatting[ command.group ].push( `**${command.name}**: *${command.description}*` );
       } );
