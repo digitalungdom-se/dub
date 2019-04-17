@@ -28,6 +28,6 @@ see `CONTRIBUTING.md`
 6. **stop**: stops the bot
 7. **volume**: changes the volume of the bot
 
-### future
+## future
 1. **kick&ban**: kick/bans a user and reports it to a database
 2. **redo help**: redo the help function to display and embed message and use reactions to control it.
