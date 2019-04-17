@@ -8,7 +8,8 @@ module.exports = {
   aliases: [],
   group: 'misc',
   usage: 'version',
+  serverOnly: false,
   execute( message, args ) {
-    message.reply( `Den nuvarande versionen av botten är: **${version}**` );
+    message.reply( `den nuvarande versionen av botten är: **${version}**` );
   },
 };

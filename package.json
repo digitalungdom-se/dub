@@ -23,11 +23,20 @@
   },
   "homepage": "https://github.com/kelszo/dud-bot#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "discord.js": "^11.4.2",
     "dotenv": "^7.0.0",
     "fs-extra": "^7.0.1",
+    "hogan.js": "^3.0.2",
+    "mongodb": "^3.2.3",
     "node-opus": "^0.3.1",
-    "util": "^0.11.1"
+    "node-spotify-api": "^1.1.1",
+    "nodemailer": "^6.1.0",
+    "npm": "^6.9.0",
+    "util": "^0.11.1",
+    "validator": "^10.11.0",
+    "yt-search": "^0.4.1",
+    "ytdl-core": "^0.29.1"
   },
   "devDependencies": {
     "eslint": "^5.12.0",

@@ -4,7 +4,8 @@ module.exports = {
   aliases: [],
   group: 'misc',
   usage: 'ping',
+  serverOnly: false,
   execute( message, args ) {
-    message.reply( 'Pong.' );
+    message.reply( 'pong.' );
   },
 };

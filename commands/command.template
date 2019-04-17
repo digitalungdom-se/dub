@@ -4,6 +4,8 @@ module.exports = {
   aliases: [],
   group: '',
   usage: '',
+  example: '',
+  serverOnly: ,
   execute(message, args) {
 
   },
