@@ -40,16 +40,16 @@ async function play( connection, message ) {
 module.exports = {
   name: 'play',
   description: 'Spelar länken i din nuvarande kanal',
-  aliases: [ 'spela', 'p' ],
+  aliases: [ 'spela', 'pl' ],
   group: 'music',
   usage: 'play <youtube link|search term|@user>',
   example: 'play https://www.youtube.com/watch?v=dQw4w9WgXcQ',
   serverOnly: true,
+  adminOnly: false,
   async execute( message, args ) {
     message.delete();
     let url = '';
     if ( args.length === 0 ) return message.reply( 'Du måste välja en låt.' );
-    if ( !message.member.voiceChannel ) return message.reply( 'Du måste vara i en ljud kanal.' );
     if ( musicQueue.length > 1000 ) return message.reply( 'Kön är full' );
     if ( message.mentions.members.first() ) {
       const user = ( message.mentions.members.first() );

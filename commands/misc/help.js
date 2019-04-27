@@ -1,7 +1,6 @@
-/* global include */
+/* global config */
 
-let { prefix } = include( 'config.json' );
-prefix = prefix[ 0 ]
+const prefix = config.prefix[ 0 ];
 
 module.exports = {
   name: 'help',
@@ -11,6 +10,7 @@ module.exports = {
   usage: 'help <command>',
   example: 'help play',
   serverOnly: false,
+  adminOnly: false,
   execute( message, args ) {
     const data = [];
     const listFormatting = {};

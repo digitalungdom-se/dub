@@ -7,6 +7,7 @@ module.exports = {
   group: 'music',
   usage: 'skip',
   serverOnly: true,
+  adminOnly: false,
   execute( message, args ) {
     if ( message.guild.voiceConnection ) {
       if ( musicQueue.length === 0 ) message.channel.send( 'Kön är slut.' );

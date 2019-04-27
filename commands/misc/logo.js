@@ -5,6 +5,7 @@ module.exports = {
   group: 'misc',
   usage: 'logo',
   serverOnly: false,
+  adminOnly: false,
   execute( message, args ) {
     const logoURL = 'https://raw.githubusercontent.com/kelszo/dub/master/dub.png';
 

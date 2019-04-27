@@ -6,6 +6,7 @@ module.exports = {
   usage: 'slap <medlem>',
   example: 'slap simon',
   serverOnly: true,
+  adminOnly: false,
   execute( message, args ) {
     if ( args.length === 0 ) return message.reply( 'Du måste ge mig ett namn för att smiska.' )
     const name = args[ 0 ].toLowerCase();

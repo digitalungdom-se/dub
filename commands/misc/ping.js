@@ -5,6 +5,7 @@ module.exports = {
   group: 'misc',
   usage: 'ping',
   serverOnly: false,
+  adminOnly: false,
   execute( message, args ) {
     message.reply( 'pong.' );
   },

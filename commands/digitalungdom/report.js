@@ -1,14 +1,16 @@
-/* global db client */
+/* global db client include */
 
+const getUserByDiscordId = include( 'models/get' ).getUserByDiscordId;
 
 module.exports = {
   name: 'report',
   description: 'Anmäl någon. Skicka via DM för att utföra delvis anonym.',
-  aliases: [ 'anmäl', 'r' ],
+  aliases: [ 'anmäl', 're' ],
   group: 'digitalungdom',
   usage: 'report <@user> <reason>',
   example: 'report @Zigolox#0919 Han är taskig :(',
   serverOnly: false,
+  adminOnly: false,
   async execute( message, args ) {
     if ( message.channel.type === 'text' ) message.delete();
     let reportedUser;
@@ -40,15 +42,16 @@ module.exports = {
 
     let reportedDUId, authorDUId;
     [ reportedDUId, authorDUId ] = await Promise.all( [
-      db.collection( 'users' ).findOne( { 'discordId': reportedId }, { projection: { '_id': 1 } } ),
-      db.collection( 'users' ).findOne( { 'discordId': authorId }, { projection: { '_id': 1 } } )
+      getUserByDiscordId( reportedId ),
+      getUserByDiscordId( authorId ),
     ] );
 
     if ( reportedDUId ) reportedDUId = reportedDUId._id;
     if ( authorDUId ) authorDUId = authorDUId._id;
 
     await db.collection( 'notifications' ).insertOne( {
-      'type': 'discordReport',
+      'type': 'report',
+      'where': 'discord',
       'message': reason,
       'reported': {
         'id': reportedDUId,

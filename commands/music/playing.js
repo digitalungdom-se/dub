@@ -10,6 +10,7 @@ module.exports = {
   group: 'music',
   usage: 'playing',
   serverOnly: true,
+  adminOnly: false,
   async execute( message, args ) {
     if ( message.mentions.members.first() ) {
       const user = ( message.mentions.members.first() );

@@ -3,10 +3,11 @@
 module.exports = {
   name: 'stop',
   description: 'Stannar botten',
-  aliases: [ 'stanna', 's' ],
+  aliases: [ 'stanna', 'st' ],
   group: 'music',
   usage: 'stop',
   serverOnly: true,
+  adminOnly: false,
   execute( message, args ) {
     if ( message.guild.voiceConnection ) {
       global.musicQueue = [];

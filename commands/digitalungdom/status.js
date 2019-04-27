@@ -1,3 +1,5 @@
+/* global  guild */
+
 const axios = require( 'axios' );
 
 module.exports = {
@@ -7,6 +9,7 @@ module.exports = {
   group: 'digitalungdom',
   usage: 'status',
   serverOnly: false,
+  adminOnly: false,
   async execute( message, args ) {
     const data = [];
     const status = ( await axios.get( 'https://digitalungdom.se/api/status' ) ).data;
@@ -21,7 +24,8 @@ module.exports = {
 
     data.push( '\n__**Members:**__' );
     const members = Object.keys( status.members );
-    members.forEach( member => data.push( `**${member}**: ${status.members[member]}` ) );
+    members.forEach( member => data.push( `**digitalungdom.se**: ${status.members[member]}` ) );
+    data.push( `**discord**: ${guild.memberCount}` );
 
     message.reply( data, { split: true } );
   },

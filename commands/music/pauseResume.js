@@ -7,6 +7,7 @@ module.exports = {
   group: 'music',
   usage: 'pr',
   serverOnly: true,
+  adminOnly: false,
   execute( message, args ) {
     if ( !message.guild.voiceConnection || !player || musicQueue.length === 0 ) return message.reply( 'botten spelar inget.' );
     if ( player.paused ) player.resume();
