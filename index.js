@@ -28,7 +28,7 @@ const fs = require( 'fs-extra' );
 const MongoClient = require( 'mongodb' ).MongoClient;
 const Canvas = require( 'canvas' );
 const fetch = require( 'node-fetch' );
-
+const voteDic = {};
 
 
 // create a new Discord client

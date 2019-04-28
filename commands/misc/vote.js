@@ -12,19 +12,19 @@ module.exports = {
   	const id = args[0];
   	const index = args[1];
   	const authorId = message.author.id;
-  	if (!voteDic.hasOwnProperty(id)){return message.reply( 'det finns ingen pågående röstning med detta id' ); }
+  	if ( !voteDic.hasOwnProperty(id)){return message.reply( 'det finns ingen pågående röstning med detta id' ); }
 
-  	if (isNaN(index) || index < 0 || index >= voteDic[id]['options'].length) return message.reply( 'du måste ge ett existerande index' );
+  	if ( isNaN(index) || index < 0 || index >= voteDic[ id ][ 'options' ].length) return message.reply( 'du måste ge ett existerande index' );
 
-  	if (voteDic[id]['users'][authorId] !== undefined) voteDic[id]['score'][voteDic[id]['users'][authorId]]--;
-  	if (voteDic[id]['score'][index] === undefined) voteDic[id]['score'][index] = 0;
+  	if ( voteDic[ id ][ 'users' ][ authorId ] !== undefined ) voteDic[ id ][ 'score' ][ voteDic[ id ][ 'users' ][ authorId ] ]--;
+  	if ( voteDic[ id ][ 'score' ][ index ] === undefined ) voteDic[ id ][ 'score' ][ index ] = 0;
 
 
 	message.delete();
-	voteDic[id]['users'][authorId] = index;
-	voteDic[id]['score'][index]++;
-	message.reply(voteDic[id])
-	console.log(voteDic);
+	voteDic[id][ 'users' ][ authorId ] = index;
+	voteDic[id][ 'score' ][ index ]++;
+	message.reply( voteDic[ id ] )
+	console.log( voteDic );
   
   },
 
