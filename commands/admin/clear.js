@@ -6,7 +6,6 @@ module.exports = {
   aliases: [ 'rensa' ],
   group: 'admin',
   usage: 'clear',
-  example: 'clear',
   serverOnly: true,
   adminOnly: true,
   async execute( message, args ) {

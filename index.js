@@ -1,4 +1,4 @@
-/* global base_dir abs_path client memberProcess guild config*/
+/* global base_dir abs_path client memberProcess guild config version*/
 
 global.base_dir = __dirname;
 global.abs_path = function ( path ) {
@@ -15,8 +15,12 @@ global.searchMessage = false;
 
 global.memberProcess = {};
 
+global.live = ( new Date() ).toISOString().slice( 0, 10 );
+global.lastUpdated = '2019-04-28';
+
 require( 'dotenv' ).config();
 global.config = require( './config.json' );
+global.version = ( require( './package.json' ) ).version;
 
 const Discord = require( 'discord.js' );
 const Spotify = require( 'node-spotify-api' );
@@ -55,6 +59,8 @@ client.once( 'ready', () => {
   console.log( 'Ready!' );
   client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
   global.guild = client.guilds.get( process.env.GUILD_ID );
+  const channel = guild.channels.find( ch => ch.name === 'general' );
+  channel.send( `startar botten på version: **${version}**.` );
 } );
 
 client.on( 'guildMemberAdd', async function ( member ) {
@@ -94,7 +100,7 @@ client.on( 'guildMemberAdd', async function ( member ) {
 
   const attachment = new Discord.Attachment( canvas.toBuffer(), 'välkommen.png' );
 
-  channel.send( `Välkommen till servern, ${member}!`, attachment );
+  return channel.send( `Välkommen till servern, ${member}!`, attachment );
 } );
 
 // mesage functions
