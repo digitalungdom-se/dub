@@ -7,8 +7,8 @@ module.exports = {
   serverOnly: false,
   adminOnly: false,
   execute( message, args ) {
-    const logoURL = 'https://raw.githubusercontent.com/kelszo/dub/master/dub.png';
+    const logoURL = 'https://raw.githubusercontent.com/kelszo/dub/master/public/imgs/dub.png';
 
-    message.reply( 'här kommer serverns nuvarande logotyp', { file: logoURL } );
+    message.reply( 'här kommer serverns och botens nuvarande logotyp', { file: logoURL } );
   },
 };
