@@ -1,3 +1,5 @@
 {
-	"prefix": [">", "$"]
+  "prefix": [">", "$"],
+  "colourHEX": "#3E5ABE",
+  "colourDECIMAL": 4086462
 }

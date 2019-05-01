@@ -1,14 +1,15 @@
-/* global db include */
+/* global db include guild */
 
 const getUserByDiscordId = include( 'models/get' ).getUserByDiscordId;
+const createNotificationEmbed = include( 'utils/embeds/createNotificationEmbed' );
 
 module.exports = {
   name: 'idea',
-  description: 'Skicka ett förslag till Digital Ungdom. Det kan vara t.ex. ett förbättrings förslag eller önskemål.',
-  aliases: [ 'suggestion', 'förslag', 'id' ],
+  description: 'Skicka ett förslag till Digital Ungdom.',
+  aliases: [ 'suggestion', 'förslag' ],
   group: 'digitalungdom',
   usage: 'idea <idea>',
-  example: 'idea skriva kommentarer i er kod',
+  example: 'idea skriva kommentarer till er kod',
   serverOnly: false,
   adminOnly: false,
   async execute( message, args ) {
@@ -29,6 +30,10 @@ module.exports = {
       }
     } );
 
-    return message.reply( 'tack för din medverkan!' );
+    const notification = createNotificationEmbed( 'IDEA', idea, 65397, { 'id': authorId, 'name': authorUsername, 'url': message.author.displayAvatarURL } );
+    const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
+    notificationChannel.send( '@here', { 'embed': notification } );
+
+    return message.author.send( 'tack för din medverkan!' );
   },
 };

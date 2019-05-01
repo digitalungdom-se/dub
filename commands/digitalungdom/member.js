@@ -71,7 +71,7 @@ const user = {
 module.exports = {
   name: 'member',
   description: 'Initierar *bli medlem* genom discord',
-  aliases: [ 'medlem', 'me' ],
+  aliases: [ 'medlem' ],
   group: 'digitalungdom',
   usage: 'member',
   example: 'member',
@@ -86,7 +86,7 @@ module.exports = {
           'color': 4086462,
           'fields': [ {
               'name': 'Process',
-              'value': 'Du kommer få ett antal frågor av botten (t.ex. vad är din e-post?). Du ska då bara svara botten, utan några kommando. För att avbryta processen tidigit skriv:\n `stop`'
+              'value': 'Du kommer få ett antal frågor av boten (t.ex. vad är din e-post?). Du ska då bara svara boten, utan några kommando. För att avbryta processen tidigit skriv:\n `stop`'
             },
             {
               'name': 'Varför?',

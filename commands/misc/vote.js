@@ -1,31 +1,51 @@
+/* global voteDic include guild */
+
+const RichEmbed = require( 'discord.js' ).RichEmbed;
+const createVoteEmbed = include( 'utils/embeds/createVoteEmbed' );
+
 module.exports = {
   name: 'vote',
-  description: 'Rösta om en fråga',
-  aliases: ['vote','vt','rösta'],
+  description: 'Börja en röstning om en fråga',
+  aliases: [ 'votestart', 'rösta', 'börjarösta' ],
   group: 'misc',
-  usage: 'rösta <id> <alternativindex>',
-  example: '',
+  usage: 'votestart "<titel>" "<alternativ 1>" "<alternativ 2>" "<alternativ 3>"',
+  example: 'votestart "vad ska vi käka?" "sushi" "taccos" "pizza"',
   serverOnly: true,
-  execute(message, args) {
-  	if ( args.length === 0 ) return message.reply( 'du måste ge ett id' );
-  	if ( args.length === 1 ) return message.reply( 'du måste ge ett index' );
-  	const id = args[0];
-  	const index = args[1];
-  	const authorId = message.author.id;
-  	if ( !voteDic.hasOwnProperty(id)){return message.reply( 'det finns ingen pågående röstning med detta id' ); }
+  async execute( message, args ) {
+    if ( !message.deleted ) message.delete( 10000 );
+    let options = args.join( ' ' ).split( '"' ).filter( ( e, i ) => i % 2 === 1 );
+    const title = options[ 0 ];
+    options.shift();
+    if ( options.length > 11 ) return message.reply( 'du får max ha 11 val.' );
+    if ( options.length < 2 ) return message.reply( 'du måste ha några val.' );
 
-  	if ( isNaN(index) || index < 0 || index >= voteDic[ id ][ 'options' ].length) return message.reply( 'du måste ge ett existerande index' );
+    let embed = new RichEmbed()
+      .setTitle( title )
+      .setAuthor( message.author.username, message.author.displayAvatarURL )
+      .setColor( 4086462 )
+      .setTimestamp();
 
-  	if ( voteDic[ id ][ 'users' ][ authorId ] !== undefined ) voteDic[ id ][ 'score' ][ voteDic[ id ][ 'users' ][ authorId ] ]--;
-  	if ( voteDic[ id ][ 'score' ][ index ] === undefined ) voteDic[ id ][ 'score' ][ index ] = 0;
+    let reactions;
+    [ embed, reactions ] = createVoteEmbed( embed, options, message );
 
+    message.reply( `grattis du har på börjat en röstningen "*${title}*"! Gå till \`voting\` kanalen för att se den` );
 
-	message.delete();
-	voteDic[id][ 'users' ][ authorId ] = index;
-	voteDic[id][ 'score' ][ index ]++;
-	message.reply( voteDic[ id ] )
-	console.log( voteDic );
-  
+    const channel = guild.channels.find( ch => ch.name === 'voting' );
+    if ( !channel ) return;
+
+    const reactionMessage = await channel.send( { 'embed': embed } );
+
+    const id = reactionMessage.id;
+    voteDic[ id ] = { options };
+    voteDic[ id ][ 'users' ] = {};
+    voteDic[ id ][ 'score' ] = {};
+    voteDic[ id ][ 'message' ] = reactionMessage;
+    voteDic[ id ][ 'embed' ] = embed;
+
+    for ( const reaction of reactions ) {
+      await reactionMessage.react( reaction );
+    }
+
+    return;
   },
-
 };

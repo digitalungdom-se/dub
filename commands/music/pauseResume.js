@@ -1,4 +1,4 @@
-/* global player musicQueue */
+/* global controller guild */
 
 module.exports = {
   name: 'pr',
@@ -6,11 +6,11 @@ module.exports = {
   aliases: [ 'pause', 'resume', 'pausa', 'fortsätt' ],
   group: 'music',
   usage: 'pr',
+  example: 'pr',
   serverOnly: true,
   adminOnly: false,
   execute( message, args ) {
-    if ( !message.guild.voiceConnection || !player || musicQueue.length === 0 ) return message.reply( 'botten spelar inget.' );
-    if ( player.paused ) player.resume();
-    else player.pause();
+    if ( !guild.voiceConnection || !controller || controller.queue.length === 0 ) return message.reply( 'botten spelar inget.' ).then( msg => { msg.delete( 10000 ); } );
+    controller.pauseResume();
   },
 };

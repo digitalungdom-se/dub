@@ -3,7 +3,8 @@ module.exports = {
   description: 'Skickar bli medlem länken.',
   aliases: [ 'medlemlänk', 'ml' ],
   group: 'digitalungdom',
-  usage: 'member',
+  usage: 'memberlink',
+  example: 'memberlink',
   serverOnly: false,
   adminOnly: false,
   execute( message, args ) {

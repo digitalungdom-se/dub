@@ -8,6 +8,7 @@ module.exports = {
   aliases: [],
   group: 'digitalungdom',
   usage: 'status',
+  example: 'status',
   serverOnly: false,
   adminOnly: false,
   async execute( message, args ) {

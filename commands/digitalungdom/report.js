@@ -1,18 +1,19 @@
-/* global db client include */
+/* global db client include guild */
 
 const getUserByDiscordId = include( 'models/get' ).getUserByDiscordId;
+const createNotificationEmbed = include( 'utils/embeds/createNotificationEmbed' );
 
 module.exports = {
   name: 'report',
-  description: 'Anmäl någon. Skicka via DM för att utföra delvis anonym.',
-  aliases: [ 'anmäl', 're' ],
+  description: 'Anmäl någon.',
+  aliases: [ 'anmäl' ],
   group: 'digitalungdom',
   usage: 'report <@user> <reason>',
   example: 'report @Zigolox#0919 Han är taskig :(',
   serverOnly: false,
   adminOnly: false,
   async execute( message, args ) {
-    if ( message.channel.type === 'text' ) message.delete();
+    if ( message.channel.type === 'text' && !message.deleted ) message.delete();
     let reportedUser;
 
     if ( message.channel.type === 'text' ) {
@@ -64,6 +65,10 @@ module.exports = {
         'discordUsername': authorUsername
       }
     } );
+
+    const notification = createNotificationEmbed( 'REPORT', reason, 16711680, { 'id': reportedId, 'name': reportedUsername, 'url': reportedUser.displayAvatarURL } );
+    const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
+    notificationChannel.send( '@here, ny notifikation', { 'embed': notification } );
 
     return message.author.send( 'Tack för din medverkan, vi kommer inom en snar framtid att granska din anmälning.' );
   },

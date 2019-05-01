@@ -1,6 +1,7 @@
-/* global config */
+/* global include help client */
 
-const prefix = config.prefix[ 0 ];
+const helpMainPage = include( 'utils/embeds/helpEmbeds' )[ 'ℹ' ];
+const reactions = include( 'utils/embeds/helpEmbeds' ).reactions;
 
 module.exports = {
   name: 'help',
@@ -11,44 +12,48 @@ module.exports = {
   example: 'help play',
   serverOnly: false,
   adminOnly: false,
-  execute( message, args ) {
-    const data = [];
-    const listFormatting = {};
-    let groups = [];
-    const { commands } = message.client;
-
-    if ( !args.length ) {
-      data.push( 'Här är en lista av alla kommandon jag kan göra:' );
-      commands.map( function ( command ) {
-        if ( !listFormatting[ command.group ] ) listFormatting[ command.group ] = [];
-        listFormatting[ command.group ].push( `**${command.name}**: *${command.description}*` );
-      } );
-
-      groups = Object.keys( listFormatting ).sort();
-      for ( let group of groups ) {
-        data.push( `\n__**${group}:**__` );
-        listFormatting[ group ].forEach( command => data.push( command ) );
+  async execute( message, args ) {
+    if ( message.channel.type === 'text' && !message.deleted ) message.delete();
+    if ( args.length === 0 ) {
+      if ( help[ message.author.id ] ) {
+        help[ message.author.id ].delete();
+        delete global.help[ message.author.id ];
       }
 
-      data.push( `\ndu kan använda \`${prefix}help <kommando namn>\` för att få mer info om ett specifikt kommando!` );
+      const helpMessage = await message.author.send( { 'embed': helpMainPage() } );
+      global.help[ message.author.id ] = helpMessage;
 
-      return message.reply( data, { split: true } );
+      for ( const reaction of reactions ) {
+        await helpMessage.react( reaction );
+      }
     } else {
-      const name = args[ 0 ].toLowerCase();
-      const command = commands.get( name ) || commands.find( c => c.aliases && c.aliases.includes( name ) );
+      const commandName = args[ 0 ];
+      const command = client.commands.get( commandName ) || client.commands.find( cmd => cmd.aliases && cmd.aliases.includes( commandName ) );
 
-      if ( !command ) {
-        return message.reply( 'that\'s not a valid command!' );
-      }
+      if ( !command ) return message.reply( `det finns inget \`${commandName}\` kommando. Är dett fel? Låt oss veta med \`idea <vilket kommando du vill ha>\`` ).then( msg => { msg.delete( 10000 ); } );
 
-      data.push( `\n**namn:** ${command.name}` );
+      const embed = {
+        'title': `**${command.name}**`,
+        'description': `*${command.description}*`,
+        'color': 4086462,
+        'fields': [ {
+            'name': 'ANVÄNDNING',
+            'value': `>\`${command.usage}\``,
+            'inline': true
+          },
+          {
+            'name': 'EXEMPEL',
+            'value': `>\`${command.example}\``,
+            'inline': true
+          },
+          {
+            'name': 'ALIAS',
+            'value': `\`${command.aliases.join(', ')}\``,
+          }
+        ]
+      };
 
-      if ( command.aliases ) data.push( `**alias:** ${command.aliases.join(', ')}` );
-      if ( command.description ) data.push( `**beskrivning:** ${command.description}` );
-      if ( command.usage ) data.push( `**användning:** \`${prefix}${command.usage}\`` );
-      if ( command.example ) data.push( `**exempel:** \`${prefix}${command.example}\`` );
-
-      message.reply( data, { split: true } );
+      return message.reply( { 'embed': embed } );
     }
   },
 };

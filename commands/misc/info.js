@@ -2,12 +2,14 @@
 
 module.exports = {
   name: 'info',
-  description: 'Anger information om botten.',
+  description: 'Anger information om boten.',
   group: 'misc',
   usage: 'info',
+  example: 'info',
   serverOnly: false,
   adminOnly: false,
   execute( message, args ) {
+    if ( !message.deleted ) message.delete( 10000 );
     const embed = {
       'description': '__**INFORMATION OM BOTEN**__',
       'color': 4086462,

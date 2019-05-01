@@ -12,8 +12,8 @@ const sendMail = include( 'utils/sendMail' ).sendMail;
 
 module.exports = {
   name: 'verify',
-  description: 'Koppla ditt discord konto till ditt Digital Ungdom konto.',
-  aliases: [ 'verifera', 've' ],
+  description: 'Koppla ditt discord konto till ditt DU konto.',
+  aliases: [ 'verifera' ],
   group: 'digitalungdom',
   usage: 'verify <username|code>',
   example: 'verify kelszo',
