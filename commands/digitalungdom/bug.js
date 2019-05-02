@@ -35,6 +35,6 @@ module.exports = {
     const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
     notificationChannel.send( '@here', { 'embed': notification } );
 
-    return message.author.send( 'tack för din medverkan!' );
+    return message.author.send( 'Tack för din medverkan!' );
   },
 };
