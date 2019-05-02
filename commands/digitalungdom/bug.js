@@ -17,7 +17,7 @@ module.exports = {
     const bug = args.join( ' ' );
     const authorID = message.author.id;
     const authorUsername = message.author.username;
-    let id = await getUserByDiscordId( authorId );
+    let id = await getUserByDiscordId( authorID );
     if ( id ) id = id._id;
 
     await db.collection( 'notifications' ).insertOne( {
@@ -31,7 +31,7 @@ module.exports = {
       }
     } );
 
-    const notification = createNotificationEmbed( 'BUG', bug, 16711680, { 'id': authorId, 'name': authorUsername, 'url': message.author.displayAvatarURL } );
+    const notification = createNotificationEmbed( 'BUG', bug, 16711680, { 'id': authorID, 'name': authorUsername, 'url': message.author.displayAvatarURL } );
     const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
     notificationChannel.send( '@here', { 'embed': notification } );
 
