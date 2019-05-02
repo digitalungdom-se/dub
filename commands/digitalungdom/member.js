@@ -1,6 +1,6 @@
 /* global memberProcess include */
 const validate = include( 'utils/userValidation' );
-const checkDiscordId = include( 'models/check' ).checkDiscordId;
+const checkDiscordID = include( 'models/check' ).checkDiscordID;
 const createUser = include( 'models/createUser' );
 
 const user = {
@@ -294,7 +294,7 @@ module.exports = {
 
         embed = {
           'embed': {
-            'title': 'Vad vill du ha för lösenord? Meddelandet tas bort direkt och ditt lösenord hashas samtidigt.',
+            'title': 'Vad vill du ha för lösenord? Ditt lösenord hashas direkt.',
             'description': 'Exempel: `exempellösenord123`',
             'color': 4086462
           }
@@ -321,7 +321,7 @@ module.exports = {
         }
 
         global.memberProcess[ message.author.id ].user.details.password = args;
-        if ( !( await checkDiscordId( message.author.id ) ) ) global.memberProcess[ message.author.id ].user.connectedApps.discord = message.author.id;
+        if ( ( await checkDiscordID( message.author.id ) ).valid ) global.memberProcess[ message.author.id ].user.connectedApps.discord = message.author.id;
 
         createUser( memberProcess[ message.author.id ].user );
         delete global.memberProcess[ message.author.id ];
