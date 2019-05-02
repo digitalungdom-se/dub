@@ -22,11 +22,11 @@ Start reading our code and you'll get the hang of it. We optimize for readabilit
 0.  **USE ESLINT**
 1.  Indent using two spaces (soft tabs)
 2.  Requires in the following order:
-3.  Built in Node Modules and NPM packages
-4.  `utils`
-5.  other
-6.  Use semicolons (`;`)
-7.  Inlines braces:
+    1.  Built in Node Modules and NPM packages
+    2.  `utils`
+    3.  other
+3.  Use semicolons (`;`)
+4.  Inlines braces:
 
 ```javascript
 // This is good
