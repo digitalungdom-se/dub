@@ -30,7 +30,7 @@ module.exports = {
       const commandName = args[ 0 ];
       const command = client.commands.get( commandName ) || client.commands.find( cmd => cmd.aliases && cmd.aliases.includes( commandName ) );
 
-      if ( !command ) return message.reply( `det finns inget \`${commandName}\` kommando. Är dett fel? Låt oss veta med \`idea <vilket kommando du vill ha>\`` ).then( msg => { msg.delete( 10000 ); } );
+      if ( !command ) return message.reply( `det finns inget \`${commandName}\` kommando. Är det fel? Låt oss veta med \`idea <vilket kommando du vill ha>\`` ).then( msg => { msg.delete( 10000 ); } );
 
       const embed = {
         'title': `**${command.name}**`,

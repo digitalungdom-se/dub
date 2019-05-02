@@ -2,7 +2,7 @@
 
 module.exports = {
   name: 'volume',
-  description: 'Ändrar volumen av boten.',
+  description: 'Ändrar musikens volym.',
   aliases: [ 'volym', 'vol' ],
   group: 'music',
   usage: 'volume <0-2 | [current , nuvarande]>',

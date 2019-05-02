@@ -30,7 +30,7 @@ module.exports = {
         },
         {
           'name': 'MEDARBETARE',
-          'value': '<@217632464531619852>',
+          'value': '<@217632464531619852>, <@228889878861971456>',
           'inline': true
         }
       ]

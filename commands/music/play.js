@@ -18,8 +18,8 @@ module.exports = {
   adminOnly: false,
   async execute( message, args ) {
     let url = '';
-    if ( args.length === 0 ) return message.reply( 'Du måste välja en låt.' ).then( msg => { msg.delete( 10000 ); } );
-    if ( controller.queue.length > 30 ) return message.reply( 'Kön är full' ).then( msg => { msg.delete( 10000 ); } );
+    if ( args.length === 0 ) return message.reply( 'du måste välja en låt.' ).then( msg => { msg.delete( 10000 ); } );
+    if ( controller.queue.length > 30 ) return message.reply( 'kön är full' ).then( msg => { msg.delete( 10000 ); } );
     if ( message.mentions.members.first() ) {
       const user = ( message.mentions.members.first() );
       const game = user.presence.game;
@@ -52,7 +52,7 @@ module.exports = {
       searchList.forEach( function ( song, index ) {
         embed.description += `**${index}.** ${song.author.name} | ${song.title}\n`;
       } );
-      embed.description += '\n Välj låt med `$play <n>` där n är låt siffran.';
+      embed.description += '\n Välj låt med `$play <n>` där n är låtens siffra.';
 
       const msg = await message.reply( { 'embed': embed } );
       global.searchMessage = msg;

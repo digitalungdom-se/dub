@@ -6,7 +6,7 @@ module.exports = async function ( message ) {
     try {
       return client.commands.get( 'member' ).execute( message, message.content );
     } catch ( error ) {
-      message.reply( `En error uppstog med commandot ${message.content}` );
+      message.reply( `Ett fel uppstog med kommandot ${message.content}.` );
       return console.error( error );
     }
   }
@@ -22,11 +22,11 @@ module.exports = async function ( message ) {
 
   if ( !command ) {
     message.delete();
-    return message.reply( 'Det finns inget sådant kommando.' ).then( ( msg ) => msg.delete( 10000 ) );
+    return message.reply( 'det finns inget sådant kommando.' ).then( ( msg ) => msg.delete( 10000 ) );
   }
 
   if ( command.serverOnly && message.channel.type !== 'text' ) {
-    return message.reply( 'Denna kommando finns bara tillgänglig i Digital Ungdom servern.' );
+    return message.reply( 'detta kommandot finns bara tillgänglig i Digital Ungdom servern.' );
   }
 
   if ( command.adminOnly ) {
@@ -52,7 +52,7 @@ module.exports = async function ( message ) {
   try {
     command.execute( message, args );
   } catch ( error ) {
-    message.reply( `En error uppstog med commandot ${message.content}` );
+    message.reply( `Ett fel uppstog med kommandot ${message.content}.` );
     console.error( error );
   }
 };

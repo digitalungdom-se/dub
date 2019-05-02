@@ -2,7 +2,7 @@
 
 module.exports = {
   name: 'stop',
-  description: 'Stannar boten',
+  description: 'Stannar botens nuvarande musik',
   aliases: [ 'stanna', 'st' ],
   group: 'music',
   usage: 'stop',

@@ -28,7 +28,7 @@ module.exports = {
       if ( /#\d{4}$/.test( reported ) ) reported = reported.slice( 0, -5 );
 
       reportedUser = client.users.find( user => user.username == reported );
-      if ( !reportedUser ) return message.reply( 'Kunde inte hitta användare, se till så att det inte är deras nickname och att alla versaler är korrekta.' );
+      if ( !reportedUser ) return message.reply( 'kunde inte hitta användare, se till så att det inte är deras nickname och att alla versaler är korrekta.' );
     }
 
     let reason = args;
@@ -70,6 +70,6 @@ module.exports = {
     const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
     notificationChannel.send( '@here, ny notifikation', { 'embed': notification } );
 
-    return message.author.send( 'Tack för din medverkan, vi kommer inom en snar framtid att granska din anmälning.' );
+    return message.author.send( 'Tack för din medverkan, vi kommer inom en snar framtid att granska din anmälan.' );
   },
 };

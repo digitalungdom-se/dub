@@ -1,6 +1,6 @@
 module.exports = {
   name: 'logo',
-  description: 'Skickar den nuvarande server logotyp',
+  description: 'Skickar serverns nuvarande logotyp',
   aliases: [ 'logotyp' ],
   group: 'misc',
   usage: 'logo',

@@ -82,7 +82,7 @@ module.exports = {
       const embed1 = {
         'embed': {
           'title': 'Bli medlem',
-          'description': 'Vad kul att du vill bli medlem, du kan även bli medlem hos denna [länk](https://digitalungdom.se/bli-medlem). Följ processen som är förklarad nedan så är du snart medlem.',
+          'description': 'Vad kul att du vill bli medlem, du kan även bli medlem genom denna [länk](https://digitalungdom.se/bli-medlem). Följ processen som är förklarad nedan så är du snart medlem.',
           'color': 4086462,
           'fields': [ {
               'name': 'Process',
@@ -90,7 +90,7 @@ module.exports = {
             },
             {
               'name': 'Varför?',
-              'value': 'Varför vill man bli medlem? När du är medlem kan du bland annat: lägga upp saker på vårt forum, delta i roliga open-source programmerings projekt och lära känna andra programmerare. Kolla gärna in vår hemsida: [digitalungdom.se](https://digitalungdom.se/bli-medlem)'
+              'value': 'Varför vill man bli medlem? När du är medlem kan du bland annat: lägga upp saker på vårt forum, delta i roliga open-source programmeringsprojekt och lära känna andra programmerare. Kolla gärna in vår hemsida: [digitalungdom.se](https://digitalungdom.se/bli-medlem)'
             },
             {
               'name': 'GDPR och Stadgar',
@@ -125,7 +125,7 @@ module.exports = {
     } else {
       if ( message.channel.type !== 'dm' ) {
         message.delete();
-        return message.author.send( 'Du måste skicka dina detaljer här via DM.' );
+        return message.author.send( 'Du måste skicka dina detaljer här via DM.För att avbryta processen tidigit skriv:\n `stop`' );
       }
 
       let embed;

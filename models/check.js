@@ -19,7 +19,7 @@ module.exports.checkEmail = async function ( email ) {
   else return { 'valid': true, 'field': 'email' };
 };
 
-module.exports.checkDiscordId = async function ( id ) {
+module.exports.checkDiscordID = async function ( id ) {
   const userExists = await db.collection( 'users' ).findOne( { 'connectedApps.discord': id }, { 'projection': { '_id': 1 } } );
 
   if ( userExists ) return { 'valid': false, 'field': 'email' };

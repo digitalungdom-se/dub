@@ -2,7 +2,7 @@
 
 module.exports = {
   name: 'skip',
-  description: 'Skippar den nuvarande låt',
+  description: 'Skippar den nuvarande låten',
   aliases: [ 'skippa', 'byt', 'sk' ],
   group: 'music',
   usage: 'skip',
@@ -16,6 +16,6 @@ module.exports = {
       else {
         message.reply( 'skippar låten' ).then( msg => { msg.delete( 10000 ); } );
       }
-    } else return message.reply( 'kan inte skippa låt då boten inte spelar något.' ).then( msg => { msg.delete( 10000 ); } );
+    } else return message.reply( 'kan inte skippa en låt då boten inte spelar någon musik.' ).then( msg => { msg.delete( 10000 ); } );
   },
 };

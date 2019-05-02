@@ -47,8 +47,15 @@ for ( const commandDirectory of commandDirectories ) {
 
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
-client.once( 'ready', () => {
+client.once( 'ready', async function () {
   global.guild = client.guilds.get( process.env.GUILD_ID );
+
+  const musicChannel = guild.channels.find( ch => ch.name === 'music' );
+  let messages = await musicChannel.fetchMessages( { limit: 100 } );
+  while ( messages.size ) {
+    musicChannel.bulkDelete( messages );
+    messages = await musicChannel.fetchMessages( { limit: 100 } );
+  }
 
   global.controller = new Controller( client, guild );
   global.searchList = false;
@@ -59,6 +66,10 @@ client.once( 'ready', () => {
   global.voteDic = {};
 
   global.help = {};
+
+  global.cooldown = {
+    verify: {}
+  };
 
   global.live = ( new Date() ).toISOString().slice( 0, 10 );
   global.lastUpdated = '2019-05-01';
@@ -88,7 +99,7 @@ client.once( 'ready', () => {
         },
         {
           'name': 'MEDARBETARE',
-          'value': '<@217632464531619852>',
+          'value': '<@217632464531619852>, <@228889878861971456>',
           'inline': true
         }
       ]
