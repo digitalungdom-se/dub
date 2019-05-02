@@ -35,16 +35,16 @@ module.exports = {
     reason.shift();
     reason = reason.join( ' ' );
 
-    const reportedId = reportedUser.id;
+    const reportedID = reportedUser.id;
     const reportedUsername = reportedUser.username;
 
-    const authorId = message.author.id;
+    const authorID = message.author.id;
     const authorUsername = message.author.username;
 
     let reportedDUId, authorDUId;
     [ reportedDUId, authorDUId ] = await Promise.all( [
-      getUserByDiscordId( reportedId ),
-      getUserByDiscordId( authorId ),
+      getUserByDiscordId( reportedID ),
+      getUserByDiscordId( authorID ),
     ] );
 
     if ( reportedDUId ) reportedDUId = reportedDUId._id;
@@ -56,17 +56,17 @@ module.exports = {
       'message': reason,
       'reported': {
         'id': reportedDUId,
-        'discordId': reportedId,
+        'discordID': reportedID,
         'discordUsername': reportedUsername
       },
       'author': {
         'id': authorDUId,
-        'discordId': authorId,
+        'discordID': authorID,
         'discordUsername': authorUsername
       }
     } );
 
-    const notification = createNotificationEmbed( 'REPORT', reason, 16711680, { 'id': reportedId, 'name': reportedUsername, 'url': reportedUser.displayAvatarURL } );
+    const notification = createNotificationEmbed( 'REPORT', reason, 16711680, { 'id': reportedID, 'name': reportedUsername, 'url': reportedUser.displayAvatarURL } );
     const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
     notificationChannel.send( '@here, ny notifikation', { 'embed': notification } );
 

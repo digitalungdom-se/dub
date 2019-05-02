@@ -15,7 +15,7 @@ module.exports = {
   async execute( message, args ) {
     if ( args.length === 0 ) return message.reply( 'Du måste skicka med ett kort meddelande.' );
     const bug = args.join( ' ' );
-    const authorId = message.author.id;
+    const authorID = message.author.id;
     const authorUsername = message.author.username;
     let id = await getUserByDiscordId( authorId );
     if ( id ) id = id._id;
@@ -26,7 +26,7 @@ module.exports = {
       'message': bug,
       'author': {
         'id': id,
-        'discordId': authorId,
+        'discordID': authorID,
         'discordUsername': authorUsername
       }
     } );
