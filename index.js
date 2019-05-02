@@ -72,7 +72,7 @@ client.once( 'ready', async function () {
   };
 
   global.live = ( new Date() ).toISOString().slice( 0, 10 );
-  global.lastUpdated = '2019-05-01';
+  global.lastUpdated = '2019-05-03';
 
   global.config = require( './config.json' );
   global.version = ( require( './package.json' ) ).version;
