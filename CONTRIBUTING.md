@@ -6,6 +6,7 @@ _A friendly reminder to follow our code of conduct. It may be found in `CODE_OF_
 
 ## Submitting Changes
 
+0.  Fork the repo on GitHub.
 1.  Create a new feature branch and switch to it: `git checkout -b myfeature`
 2.  Write code!
 3.  **Test** your code!

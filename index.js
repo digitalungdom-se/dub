@@ -1,4 +1,4 @@
-/* global base_dir abs_path client guild version */
+/* global base_dir abs_path client guild version lastUpdated live */
 require( 'dotenv' ).config();
 
 global.base_dir = __dirname;
@@ -67,7 +67,33 @@ client.once( 'ready', () => {
   global.version = ( require( './package.json' ) ).version;
 
   client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
-  guild.channels.find( ch => ch.name === 'general' ).send( `startar boten på version: **${version}**.` );
+  guild.channels.find( ch => ch.name === 'general' ).send( `startar boten på version: **${version}**.`, {
+    'embed': {
+      'description': '__**INFORMATION OM BOTEN**__',
+      'color': 4086462,
+      'fields': [ {
+          'name': 'VERSION',
+          'value': `${version} (${lastUpdated})`,
+          'inline': true
+        },
+        {
+          'name': 'LIVE SEDAN',
+          'value': `${live}`,
+          'inline': true
+        },
+        {
+          'name': 'KÄLLKOD',
+          'value': '[github](https://github.com/kelszo/dub)',
+          'inline': true
+        },
+        {
+          'name': 'MEDARBETARE',
+          'value': '<@217632464531619852>',
+          'inline': true
+        }
+      ]
+    }
+  } );
 
   console.log( 'Ready!' );
 } );
