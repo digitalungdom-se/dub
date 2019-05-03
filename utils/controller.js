@@ -59,6 +59,8 @@ module.exports = class Controller {
 
         this.connection.disconnect();
         this.connection = false;
+
+        this.client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
       }
     }.bind( this ) );
   }
@@ -80,7 +82,6 @@ module.exports = class Controller {
   stop() {
     this.queue = [];
     this.player.destroy();
-    this.client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
   }
 
   setVolume( volume ) {
