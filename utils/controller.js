@@ -80,6 +80,7 @@ module.exports = class Controller {
   stop() {
     this.queue = [];
     this.player.destroy();
+    this.client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
   }
 
   setVolume( volume ) {
