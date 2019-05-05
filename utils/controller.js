@@ -68,7 +68,8 @@ module.exports = class Controller {
   async add( song, message ) {
     this.queue.push( song );
     if ( !this.connection ) {
-      this.connection = await message.member.voiceChannel.join();
+      if ( message.member ) this.connection = await message.member.voiceChannel.join();
+      else this.connection = await message.voiceChannel.join();
       this.play();
     } else {
       this.updateDisplay();

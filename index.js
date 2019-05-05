@@ -21,6 +21,7 @@ const welcomerMiddleware = require( './middleware/welcomer' );
 const helpMiddleware = require( './middleware/help' );
 const controllerMiddleware = require( './middleware/controller' );
 const messageHandler = require( './middleware/messageHandler' );
+const searchListMiddleware = require( './middleware/searchList' );
 
 // create a new Discord client
 global.client = new Discord.Client();
@@ -122,6 +123,9 @@ client.on( 'messageReactionRemove', helpMiddleware );
 
 // music controller middleware
 client.on( 'messageReactionAdd', controllerMiddleware );
+
+// search list middleware
+client.on( 'messageReactionAdd', searchListMiddleware );
 
 // message handler middleware
 client.on( 'message', messageHandler );

@@ -33,7 +33,7 @@ module.exports = {
       }
     } else if ( ytdl.validateURL( args[ 0 ] ) ) {
       url = args[ 0 ];
-    } else if ( searchList && ( args[ 0 ] >= 0 || args[ 0 ] <= 5 ) ) {
+    } else if ( searchList && ( args[ 0 ] >= 0 || args[ 0 ] <= searchList.length ) ) {
       const index = Math.floor( args[ 0 ] );
       url = `https://www.youtube.com${searchList[ index ].url}`;
     } else {
@@ -56,6 +56,11 @@ module.exports = {
 
       const msg = await message.reply( { 'embed': embed } );
       global.searchMessage = msg;
+
+      const reactions = [ '0⃣', '1⃣', '2⃣', '3⃣', '4⃣' ];
+      for ( const reaction of reactions ) {
+        await msg.react( reaction );
+      }
       return;
     }
     const metadata = await ytdl.getBasicInfo( url );
