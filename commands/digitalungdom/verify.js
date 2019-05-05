@@ -20,7 +20,7 @@ module.exports = {
   serverOnly: false,
   adminOnly: false,
   async execute( message, args ) {
-    if ( message.channel.type === 'text' ) message.delete();
+    if ( message.channel.type === 'text' && !message.deleted ) message.delete();
     if ( args.length === 0 ) return message.author.send( 'Du måste skicka det användarnamn som du vill koppla till.' );
     const content = args[ 0 ];
     const discordID = message.author.id;

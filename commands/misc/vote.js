@@ -12,12 +12,11 @@ module.exports = {
   example: 'votestart "vad ska vi käka?" "sushi" "taccos" "pizza"',
   serverOnly: true,
   async execute( message, args ) {
-    if ( !message.deleted ) message.delete( 10000 );
     let options = args.join( ' ' ).split( '"' ).filter( ( e, i ) => i % 2 === 1 );
     const title = options[ 0 ];
     options.shift();
-    if ( options.length > 11 ) return message.reply( 'du får max ha 11 val.' );
-    if ( options.length < 2 ) return message.reply( 'du måste ha några val.' );
+    if ( options.length > 11 ) return message.reply( 'du får max ha 11 val.' ).then( ( msg ) => msg.delete( 10000 ) );
+    if ( options.length < 2 ) return message.reply( 'du måste ha några val.' ).then( ( msg ) => msg.delete( 10000 ) );
 
     let embed = new RichEmbed()
       .setTitle( title )
@@ -28,7 +27,7 @@ module.exports = {
     let reactions;
     [ embed, reactions ] = createVoteEmbed( embed, options, message );
 
-    message.reply( `grattis du har på börjat en röstningen "*${title}*"! Gå till \`voting\` kanalen för att se den` );
+    message.reply( `grattis du har på börjat en röstningen "*${title}*"! Gå till \`voting\` kanalen för att se den` ).then( ( msg ) => msg.delete( 10000 ) );
 
     const channel = guild.channels.find( ch => ch.name === 'voting' );
     if ( !channel ) return;

@@ -10,7 +10,6 @@ module.exports = {
   serverOnly: true,
   adminOnly: true,
   async execute( message, args ) {
-    if ( !message.deleted ) message.delete();
     let messages = await message.channel.fetchMessages( { limit: 100 } );
     if ( args[ 0 ] !== 'all' ) {
       messages = messages.filter( function ( m ) {
@@ -19,5 +18,7 @@ module.exports = {
       } );
     }
     message.channel.bulkDelete( messages );
+
+    if ( message.channel.name === 'voting' ) global.voteDic = {};
   },
 };

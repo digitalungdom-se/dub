@@ -8,7 +8,6 @@ module.exports = {
   serverOnly: true,
   adminOnly: false,
   execute( message, args ) {
-    if ( !message.deleted ) message.delete( 10000 );
     if ( args.length === 0 ) return message.reply( 'Du måste ge mig ett namn för att smiska.' ).then( ( msg ) => msg.delete( 10000 ) );
     const name = args[ 0 ].toLowerCase();
 

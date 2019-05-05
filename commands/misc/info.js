@@ -1,4 +1,4 @@
-/* global version live lastUpdated */
+/* global version live lastUpdated guild */
 
 module.exports = {
   name: 'info',
@@ -9,7 +9,6 @@ module.exports = {
   serverOnly: false,
   adminOnly: false,
   execute( message, args ) {
-    if ( !message.deleted ) message.delete( 10000 );
     const embed = {
       'description': '__**INFORMATION OM BOTEN**__',
       'color': 4086462,
@@ -36,6 +35,9 @@ module.exports = {
       ]
     };
 
-    message.reply( { embed: embed } );
+    if ( message ) message.reply( { embed: embed } );
+    else {
+      guild.channels.find( ch => ch.name === 'general' ).send( `startar boten på version: **${version}**.`, { embed: embed } );
+    }
   },
 };

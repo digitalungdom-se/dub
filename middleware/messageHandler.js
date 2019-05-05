@@ -1,15 +1,20 @@
 /* global client guild memberProcess config */
 
 module.exports = async function ( message ) {
-  if ( ( config.prefix.indexOf( message.content.charAt( 0 ) ) === -1 || message.content.length === 1 || message.author.bot ) && !memberProcess[ message.author.id ] ) return;
+  if ( message.author.bot ) return;
+  if ( [ 'music', 'voting', 'notifications' ].indexOf( message.channel.name ) > -1 ) message.delete();
+
+  if ( ( config.prefix.indexOf( message.content.charAt( 0 ) ) === -1 || message.content.length === 1 ) && !memberProcess[ message.author.id ] ) return;
   else if ( memberProcess[ message.author.id ] ) {
     try {
       return client.commands.get( 'member' ).execute( message, message.content );
     } catch ( error ) {
-      message.reply( `Ett fel uppstog med kommandot ${message.content}.` );
+      message.reply( `ett fel uppstog med kommandot ${message.content}.` );
       return console.error( error );
     }
   }
+
+  if ( !message.deleted && message.channel.type === 'text' ) message.delete( 10000 );
 
   // gets the args of the command
   let args = message.content.slice( 1 ).split( ' ' );
@@ -21,7 +26,6 @@ module.exports = async function ( message ) {
   const command = client.commands.get( commandName ) || client.commands.find( cmd => cmd.aliases && cmd.aliases.includes( commandName ) );
 
   if ( !command ) {
-    message.delete();
     return message.reply( 'det finns inget sådant kommando.' ).then( ( msg ) => msg.delete( 10000 ) );
   }
 
@@ -30,15 +34,11 @@ module.exports = async function ( message ) {
   }
 
   if ( command.adminOnly ) {
-    message.delete();
     if ( !message.member.roles.find( r => r.name === 'admin' ) ) return message.reply( `du har inte behörighet att köra \`${command.name}\`.` ).then( ( msg ) => msg.delete( 10000 ) );
   }
 
-  if ( [ 'music', 'voting' ].indexOf( message.channel.name ) > -1 ) message.delete();
-
   if ( command.group === 'music' ) {
     if ( message.channel.name !== 'music' ) {
-      message.delete();
       return message.reply( ' du måste skriva i `music` kanalen.' ).then( msg => { msg.delete( 10000 ); } );
     }
     if ( !message.member.voiceChannel ) {

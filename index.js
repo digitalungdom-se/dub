@@ -58,6 +58,8 @@ client.once( 'ready', async function () {
     messages = await musicChannel.fetchMessages( { limit: 100 } );
   }
 
+  guild.channels.find( ch => ch.name === 'voting' ).send( 'Alla omröstningar innan detta meddelande är nu stängda.' );
+
   global.controller = new Controller( client, guild );
   global.searchList = false;
   global.searchMessage = false;
@@ -73,39 +75,14 @@ client.once( 'ready', async function () {
   };
 
   global.live = ( new Date() ).toISOString().slice( 0, 10 );
-  global.lastUpdated = '2019-05-03';
+  global.lastUpdated = '2019-05-05';
 
   global.config = require( './config.json' );
   global.version = ( require( './package.json' ) ).version;
 
+  client.commands.get( 'info' ).execute();
+
   client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
-  guild.channels.find( ch => ch.name === 'general' ).send( `startar boten på version: **${version}**.`, {
-    'embed': {
-      'description': '__**INFORMATION OM BOTEN**__',
-      'color': 4086462,
-      'fields': [ {
-          'name': 'VERSION',
-          'value': `${version} (${lastUpdated})`,
-          'inline': true
-        },
-        {
-          'name': 'LIVE SEDAN',
-          'value': `${live}`,
-          'inline': true
-        },
-        {
-          'name': 'KÄLLKOD',
-          'value': '[github](https://github.com/kelszo/dub)',
-          'inline': true
-        },
-        {
-          'name': 'MEDARBETARE',
-          'value': '<@217632464531619852>, <@228889878861971456>',
-          'inline': true
-        }
-      ]
-    }
-  } );
 
   console.log( 'Ready!' );
 } );

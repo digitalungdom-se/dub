@@ -26,6 +26,8 @@ module.exports = {
       for ( const reaction of reactions ) {
         await helpMessage.react( reaction );
       }
+
+      helpMessage.delete( 300000 );
     } else {
       const commandName = args[ 0 ];
       const command = client.commands.get( commandName ) || client.commands.find( cmd => cmd.aliases && cmd.aliases.includes( commandName ) );
@@ -52,8 +54,6 @@ module.exports = {
           }
         ]
       };
-
-      return message.reply( { 'embed': embed } );
     }
   },
 };
