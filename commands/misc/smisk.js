@@ -17,6 +17,6 @@ module.exports = {
       'douglas': '297671552823066626',
     };
     if ( !members[ name ] ) return message.reply( 'ingen i styrelsen heter så, testa: Douglas, Simon eller Kelvin' ).then( ( msg ) => msg.delete( 10000 ) );
-    message.channel.send( `Du har varit en riktig stygg pojk <@${members[name]}>.` );
+    message.channel.send( `Du har varit en riktig stygg pojk <@${members[name]}>. *smisk*` );
   },
 };
