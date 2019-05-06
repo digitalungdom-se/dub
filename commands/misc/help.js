@@ -54,6 +54,8 @@ module.exports = {
           }
         ]
       };
+
+      return message.reply( { 'embed': embed } );
     }
   },
 };
