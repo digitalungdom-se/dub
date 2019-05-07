@@ -4,7 +4,6 @@ const ytdl = require( 'ytdl-core' );
 
 module.exports = class Controller {
   constructor( client, guild ) {
-    console.log( global.status );
     this.client = client;
     this.guild = guild;
 
