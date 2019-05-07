@@ -59,7 +59,6 @@ client.once( 'ready', async function () {
   }
 
   guild.channels.find( ch => ch.name === 'voting' ).send( 'Alla omröstningar innan detta meddelande är nu stängda.' );
-
   global.controller = new Controller( client, guild );
   global.searchList = false;
   global.searchMessage = false;
@@ -80,9 +79,11 @@ client.once( 'ready', async function () {
   global.config = require( './config.json' );
   global.version = ( require( './package.json' ) ).version;
 
+  global.status = { 'acitivity': 'Kelvin\'s cat', 'type': 'WATCHING' };
+
   client.commands.get( 'info' ).execute();
 
-  client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
+  client.user.setActivity( status.acitivity, { 'type': status.type } );
 
   console.log( 'Ready!' );
 } );
@@ -106,6 +107,9 @@ client.on( 'messageReactionAdd', searchListMiddleware );
 
 // message handler middleware
 client.on( 'message', messageHandler );
+
+// error handler
+process.on( 'unhandledRejection', error => console.error( 'Uncaught Promise Rejection', error ) );
 
 MongoClient.connect( process.env.DB_URL, { useNewUrlParser: true }, async function ( err, mongoClient ) {
   if ( err ) return console.log( 'mongodb', err );

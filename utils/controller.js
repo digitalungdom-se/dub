@@ -4,6 +4,7 @@ const ytdl = require( 'ytdl-core' );
 
 module.exports = class Controller {
   constructor( client, guild ) {
+    console.log( global.status );
     this.client = client;
     this.guild = guild;
 
@@ -60,7 +61,7 @@ module.exports = class Controller {
         this.connection.disconnect();
         this.connection = false;
 
-        this.client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
+        this.client.user.setActivity( status.acitivity, { 'type': status.type } );
       }
     }.bind( this ) );
   }

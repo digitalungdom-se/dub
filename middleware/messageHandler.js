@@ -3,7 +3,6 @@
 module.exports = async function ( message ) {
   if ( message.author.bot ) return;
   if ( [ 'music', 'voting', 'notifications' ].indexOf( message.channel.name ) > -1 ) message.delete();
-
   if ( ( config.prefix.indexOf( message.content.charAt( 0 ) ) === -1 || message.content.length === 1 ) && !memberProcess[ message.author.id ] ) return;
   else if ( memberProcess[ message.author.id ] ) {
     try {
@@ -14,7 +13,12 @@ module.exports = async function ( message ) {
     }
   }
 
-  if ( !message.deleted && message.channel.type === 'text' ) message.delete( 10000 );
+  if ( message.channel.type === 'text' && message.channel.parent.name !== 'bot' ) {
+    message.reply( 'du måste använda boten i `bot` underkanalerna.' ).then( ( msg ) => msg.delete( 10000 ) );
+    return message.delete();
+  }
+
+  message.delete( 10000 );
 
   // gets the args of the command
   let args = message.content.slice( 1 ).split( ' ' );

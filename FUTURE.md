@@ -2,8 +2,6 @@
 
 ## new commands
 
--   kick/ban and logging to database
-
 ## improvements
 
 -   refactor to a class oriented command style  

@@ -1,6 +1,6 @@
-/* global help include */
+/* global help include guild */
 
-const helpEmbeds = include( 'utils/embeds/helpEmbeds' );
+const helpEmbeds = include( 'utils/embeds/createHelpEmbeds' );
 
 module.exports = async function ( message, user ) {
   if ( user.bot ) return;
@@ -10,7 +10,8 @@ module.exports = async function ( message, user ) {
 
   const page = message.emoji.name;
 
-  if ( page === helpEmbeds.reactions[ helpEmbeds.reactions.length - 1 ] ) return helpMessage.delete();
+  if ( page === '🔥' ) return helpMessage.delete();
+  if ( page === '🚨' && !( await guild.fetchMember( user ) ).roles.find( r => r.name === 'admin' ) ) return;
 
   const embed = helpEmbeds[ page ]();
 
