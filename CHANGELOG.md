@@ -2,7 +2,7 @@
 
 ## new commands
 
--   kick/ban and logging to database
+-   kick&ban and logging to database
 -   dubstatus, an admin command to change the status of the bot
 
 ## improvements
