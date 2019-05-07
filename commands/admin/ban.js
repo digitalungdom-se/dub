@@ -39,7 +39,7 @@ module.exports = {
     if ( adminDUID ) adminDUID = adminDUID._id;
 
     await db.collection( 'notifications' ).insertOne( {
-      'type': 'kick',
+      'type': 'ban',
       'where': 'discord',
       'message': reason,
       'kicked': {
@@ -54,7 +54,7 @@ module.exports = {
       }
     } );
 
-    const notification = createNotificationEmbed( 'KICK', `bannade <@${kickedID}>.\n\n **Anledning:** ${reason}`, 16711680, { 'id': adminID, 'name': kickedUsername, 'url': member.user.displayAvatarURL } );
+    const notification = createNotificationEmbed( 'BAN', `bannade <@${kickedID}>.\n\n **Anledning:** ${reason}`, 16711680, { 'id': adminID, 'name': kickedUsername, 'url': member.user.displayAvatarURL } );
     const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
     notificationChannel.send( '@here, ny notifikation', { 'embed': notification } );
 
