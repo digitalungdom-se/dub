@@ -1,4 +1,4 @@
-/* global base_dir abs_path client guild version lastUpdated live */
+/* global base_dir abs_path client guild */
 require( 'dotenv' ).config();
 
 global.base_dir = __dirname;

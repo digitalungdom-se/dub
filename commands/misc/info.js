@@ -3,6 +3,7 @@
 module.exports = {
   name: 'info',
   description: 'Anger information om boten.',
+  aliases: [],
   group: 'misc',
   usage: 'info',
   example: 'info',

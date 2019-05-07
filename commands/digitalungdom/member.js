@@ -70,7 +70,7 @@ const user = {
 
 module.exports = {
   name: 'member',
-  description: 'Initierar *bli medlem* genom discord',
+  description: 'Initierar bli medlem genom discord',
   aliases: [ 'medlem' ],
   group: 'digitalungdom',
   usage: 'member',

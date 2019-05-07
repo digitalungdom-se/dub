@@ -48,12 +48,15 @@ module.exports = {
             'value': `>\`${command.example}\``,
             'inline': true
           },
-          {
-            'name': 'ALIAS',
-            'value': `\`${command.aliases.join(', ')}\``,
-          }
         ]
       };
+
+      if ( command.aliases.length > 0 ) {
+        embed.fields.push( {
+          'name': 'ALIAS',
+          'value': `\`${command.aliases.join(', ')}\``,
+        } );
+      }
 
       return message.reply( { 'embed': embed } );
     }
