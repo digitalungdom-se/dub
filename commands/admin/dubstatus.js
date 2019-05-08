@@ -10,12 +10,12 @@ module.exports = {
   serverOnly: true,
   adminOnly: true,
   execute( message, args ) {
-    if ( [ 'PLAYING', 'STREAMING', 'LISTENING', 'WATCHING' ].indexOf( args[ 0 ] ) === -1 ) return message.reply( `okänt aktivitets typ: \`${args[0]}\`` );
+    if ( [ 'PLAYING', 'STREAMING', 'LISTENING', 'WATCHING' ].indexOf( args[ 0 ] ) === -1 ) return message.reply( `okänt aktivitets typ: \`${args[0]}\`. Testa: \`PLAYING\`, \`STREAMING\`, \`LISTENING\`, \`WATCHING\`.` ).then( msg => { msg.delete( 10000 ); } );
     const type = args[ 0 ];
 
     let acitivity = args;
     acitivity.shift();
-    if ( acitivity.length === 0 ) return message.reply( 'du måste ge en status.' );
+    if ( acitivity.length === 0 ) return message.reply( 'du måste ge en status.' ).then( msg => { msg.delete( 10000 ); } );
     acitivity = acitivity.join( ' ' );
 
     global.status = { 'acitivity': acitivity, 'type': type };
