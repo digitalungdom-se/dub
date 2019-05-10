@@ -108,8 +108,8 @@ client.on( 'message', messageHandler );
 
 // error handler
 process.on( 'unhandledRejection', error => console.error( 'Uncaught Promise Rejection', ( new Date() ).toISOString(), error ) );
-process.on( 'uncaughtException', error => console.error( 'Uncaught Promise Rejection', ( new Date() ).toISOString(), error ) );
-client.on( 'error', error => console.error( 'Uncaught Promise Rejection', ( new Date() ).toISOString(), error ) );
+process.on( 'uncaughtException', error => console.error( 'Uncaught Exception', ( new Date() ).toISOString(), error ) );
+client.on( 'error', error => console.error( 'Uncaught Error', ( new Date() ).toISOString(), error ) );
 
 MongoClient.connect( process.env.DB_URL, { useNewUrlParser: true }, async function ( err, mongoClient ) {
   if ( err ) return console.log( 'mongodb', err );
