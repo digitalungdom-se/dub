@@ -112,7 +112,7 @@ process.on( 'uncaughtException', error => console.error( 'Uncaught Exception', (
 client.on( 'error', error => console.error( 'Uncaught Error', ( new Date() ).toISOString(), error ) );
 
 MongoClient.connect( process.env.DB_URL, { useNewUrlParser: true }, async function ( err, mongoClient ) {
-  if ( err ) return console.log( 'mongodb', err );
+  if ( err ) return console.error( 'mongodb', err );
   global.db = mongoClient.db( 'digitalungdom' );
   client.login( process.env.BOT_TOKEN );
 } );
