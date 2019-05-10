@@ -81,11 +81,9 @@ client.once( 'ready', async function () {
 
   global.status = { 'acitivity': 'Kelvin\'s cat', 'type': 'WATCHING' };
 
-  client.commands.get( 'info' ).execute();
-
   client.user.setActivity( status.acitivity, { 'type': status.type } );
 
-  console.log( 'Ready!' );
+  console.log( 'Ready!', ( new Date() ).toISOString() );
 } );
 
 // welcomer middleware
