@@ -14,7 +14,6 @@ module.exports = {
   adminOnly: false,
   async execute( message, args ) {
     const reactions = reactionsBase;
-    if ( message.channel.type === 'text' && !message.deleted ) message.delete();
     if ( args.length === 0 ) {
       if ( help[ message.author.id ] ) {
         help[ message.author.id ].delete();
