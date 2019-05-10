@@ -1,8 +1,6 @@
-# 1.1.0
+# 1.2.0
 
 ## new commands
-
--   kick/ban and logging to database
 
 ## improvements
 

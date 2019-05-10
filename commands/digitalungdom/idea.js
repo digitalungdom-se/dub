@@ -17,7 +17,7 @@ module.exports = {
     const idea = args.join( ' ' );
     const authorID = message.author.id;
     const authorUsername = message.author.username;
-    let id = await getUserByDiscordId( authorId );
+    let id = await getUserByDiscordId( authorID );
     if ( id ) id = id._id;
 
     await db.collection( 'notifications' ).insertOne( {
@@ -31,10 +31,10 @@ module.exports = {
       }
     } );
 
-    const notification = createNotificationEmbed( 'IDEA', idea, 65397, { 'id': authorId, 'name': authorUsername, 'url': message.author.displayAvatarURL } );
+    const notification = createNotificationEmbed( 'IDEA', idea, 65397, { 'id': authorID, 'name': authorUsername, 'url': message.author.displayAvatarURL } );
     const notificationChannel = guild.channels.find( ch => ch.name === 'notifications' );
     notificationChannel.send( '@here', { 'embed': notification } );
 
-    return message.reply( 'tack för din medverkan!' );
+    return message.reply( 'tack för din medverkan!' ).then( msg => { msg.delete( 10000 ); } );
   },
 };

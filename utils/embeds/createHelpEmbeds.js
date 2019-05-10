@@ -1,6 +1,7 @@
 /* global client */
 
-module.exports.reactions = [ 'ℹ', '🖥', '🎵', '🛠', '🚨', '🔥' ];
+// admin: '🚨'
+module.exports.reactions = [ 'ℹ', '🖥', '🎵', '🛠', '🔥' ];
 
 module.exports[ 'ℹ' ] = function () {
   return {
@@ -11,7 +12,6 @@ module.exports[ 'ℹ' ] = function () {
       '\n:desktop: **--** Digital Ungdom kommandon' +
       '\n:musical_note:  **--** Musik kommandon' +
       '\n:tools: **--** Misc kommandon' +
-      '\n:rotating_light: **--** Admin kommandon' +
       '\n:fire:  **--** Stäng hjälp sida',
     'color': 4086462
   };

@@ -59,7 +59,6 @@ client.once( 'ready', async function () {
   }
 
   guild.channels.find( ch => ch.name === 'voting' ).send( 'Alla omröstningar innan detta meddelande är nu stängda.' );
-
   global.controller = new Controller( client, guild );
   global.searchList = false;
   global.searchMessage = false;
@@ -75,16 +74,16 @@ client.once( 'ready', async function () {
   };
 
   global.live = ( new Date() ).toISOString().slice( 0, 10 );
-  global.lastUpdated = '2019-05-05';
+  global.lastUpdated = '2019-05-10';
 
   global.config = require( './config.json' );
   global.version = ( require( './package.json' ) ).version;
 
-  client.commands.get( 'info' ).execute();
+  global.status = { 'acitivity': 'Kelvin\'s cat', 'type': 'WATCHING' };
 
-  client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
+  client.user.setActivity( status.acitivity, { 'type': status.type } );
 
-  console.log( 'Ready!' );
+  console.log( 'Ready!', ( new Date() ).toISOString() );
 } );
 
 // welcomer middleware
@@ -106,6 +105,9 @@ client.on( 'messageReactionAdd', searchListMiddleware );
 
 // message handler middleware
 client.on( 'message', messageHandler );
+
+// error handler
+process.on( 'unhandledRejection', error => console.error( 'Uncaught Promise Rejection', error ) );
 
 MongoClient.connect( process.env.DB_URL, { useNewUrlParser: true }, async function ( err, mongoClient ) {
   if ( err ) return console.log( 'mongodb', err );

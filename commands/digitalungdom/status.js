@@ -12,7 +12,6 @@ module.exports = {
   serverOnly: false,
   adminOnly: false,
   async execute( message, args ) {
-    const data = [];
     const status = ( await axios.get( 'https://digitalungdom.se/api/status' ) ).data;
     const embed = {
       'title': '__**STATUS**__',
@@ -37,6 +36,6 @@ module.exports = {
     embed.fields.push( membersField );
 
 
-    message.reply( 'här kommer statusen av Digital Ungdom:', { 'embed': embed } );
+    message.reply( 'här kommer statusen av Digital Ungdom:', { 'embed': embed } ).then( msg => { msg.delete( 10000 ); } );
   },
 };

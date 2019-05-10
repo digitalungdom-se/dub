@@ -11,6 +11,7 @@ module.exports = class Controller {
     this.queue = [];
     this.volume = 0.1;
     this.connection = guild.VoiceConnection;
+    this.playing = false;
 
     this.musicChannel = guild.channels.find( ch => ch.name === 'music' );
 
@@ -23,6 +24,7 @@ module.exports = class Controller {
   }
 
   async play() {
+    this.playing = true;
     const url = this.queue[ 0 ].url;
     this.player = this.connection.playStream( ytdl( url, { quality: 'highestaudio', filter: 'audioonly' } ), {
       bitrate: 192000,
@@ -53,6 +55,7 @@ module.exports = class Controller {
         this.updateDisplay();
         this.queue = [];
         this.volume = 0.1;
+        this.playing = false;
 
         this.searchList = false;
         this.searchMessage = false;
@@ -60,7 +63,7 @@ module.exports = class Controller {
         this.connection.disconnect();
         this.connection = false;
 
-        this.client.user.setActivity( 'Kelvin\'s cat', { type: 'WATCHING' } );
+        this.client.user.setActivity( status.acitivity, { 'type': status.type } );
       }
     }.bind( this ) );
   }
@@ -88,6 +91,8 @@ module.exports = class Controller {
   setVolume( volume ) {
     if ( volume.set ) this.volume = parseFloat( volume.set );
     else if ( volume.inc ) this.volume += parseFloat( volume.inc );
+    if ( this.volume < 0 ) this.volume = 0;
+    else if ( this.volume > 2 ) this.volume = 2;
 
     this.player.setVolume( this.volume );
 
