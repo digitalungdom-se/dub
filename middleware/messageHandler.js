@@ -9,7 +9,7 @@ module.exports = async function ( message ) {
       return client.commands.get( 'member' ).execute( message, message.content );
     }
 
-    if ( message.channel.type === 'text' && message.channel.parent.name !== 'bot' ) {
+    if ( message.channel.type === 'text' && message.channel.parent.name !== 'bot' && !message.member.roles.find( r => r.name === 'admin' ) ) {
       message.reply( 'du måste använda boten i `bot` underkanalerna.' ).then( ( msg ) => msg.delete( 10000 ) );
       return message.delete();
     }
