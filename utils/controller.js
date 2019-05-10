@@ -142,6 +142,7 @@ module.exports = class Controller {
   }
 
   async newController() {
+    if ( this.message ) this.message.delete();
     this.message = await this.musicChannel.send( { 'embed': this.embed } );
 
     const reactions = [ '❎', '⏯', '⏭', '➕', '➖' ];

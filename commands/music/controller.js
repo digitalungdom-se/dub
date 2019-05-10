@@ -15,7 +15,7 @@ module.exports = {
   serverOnly: true,
   adminOnly: false,
   async execute( message, args ) {
-    if ( controller.queue === 0 || !controller || !guild.me.voiceChannelID ) global.controller = new Controller( client, guild );
+    if ( !controller ) global.controller = new Controller( client, guild );
     else controller.newController();
   },
 };
