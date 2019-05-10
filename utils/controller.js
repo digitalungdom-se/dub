@@ -100,6 +100,7 @@ module.exports = class Controller {
   }
 
   pauseResume() {
+    if ( !this.player ) return;
     if ( this.player.paused ) this.player.resume();
     else if ( !this.player.paused ) this.player.pause();
     this.updateDisplay();
