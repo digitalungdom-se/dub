@@ -14,3 +14,9 @@
 -   removed startup message
 
 ## deprecations
+
+## 1.1.1
+
+### bug fixes
+
+-  fixed bug that caused bot to restart
