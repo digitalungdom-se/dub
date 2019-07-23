@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/kelszo/dud-bot#readme",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.1",
     "canvas": "^2.4.1",
