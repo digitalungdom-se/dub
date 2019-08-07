@@ -9,18 +9,16 @@ module.exports.add = async function ( message, user ) {
     const index = message.emoji.name;
     const userID = user.id;
 
-    for ( let reaction of message.message.reactions ) {
-      const messageReaction = reaction[ 1 ];
-      const reactionEmoji = reaction[ 0 ];
+    const allowed = Array.from( message.message.reactions.keys() );
 
-      if ( reactionEmoji !== index ) await messageReaction.remove( user.id );
+    if ( allowed.length !== voteDic[ id ].options.length ) return message.emoji.reaction.remove( user.id );
+    else {
+      voteDic[ id ][ 'users' ][ userID ] = index;
+
+      const embed = createVoteEmbed( voteDic[ id ].embed, voteDic[ id ].options, voteDic[ id ].message )[ 0 ];
+
+      await voteDic[ id ].message.edit( { 'embed': embed } );
     }
-
-    voteDic[ id ][ 'users' ][ userID ] = index;
-
-    const embed = createVoteEmbed( voteDic[ id ].embed, voteDic[ id ].options, voteDic[ id ].message )[ 0 ];
-
-    await voteDic[ id ].message.edit( { 'embed': embed } );
   }
 };
 
