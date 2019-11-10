@@ -19,24 +19,10 @@ _A friendly reminder to follow our code of conduct. It may be found in `CODE_OF_
 
 Start reading our code and you'll get the hang of it. We optimize for readability. Some basics:
 
-0.  **USE ESLINT**
-1.  Indent using two spaces (soft tabs)
-2.  Requires in the following order:
-    1.  Built in Node Modules and NPM packages
-    2.  `utils`
-    3.  other
-3.  Use semicolons (`;`)
-4.  Inlines braces:
-
-```javascript
-// This is good
-if ( true ) {
-
-}
-
-// This is bad
-if ( false )
-{
-
-}
-```
+0.  **[USE GOLANG CODING CONVENTIONS](https://github.com/golang/go/wiki/CodeReviewComments)**
+1.  Indent using spaces
+2.  Sort imports and structs
+	1. Imports should have to following order:
+		1. Packages from standard library
+		2. Third-party packages
+		3. Packages in same repository
