@@ -74,6 +74,10 @@ func (reactionListener *ReactionListener) React(message *discordgo.MessageReacti
 		err = errors.New("Invalid default message type")
 	}
 
+	if err != nil {
+		return err
+	}
+
 	err = reactionListener.discord.MessageReactionRemove(message.ChannelID, message.MessageID, message.Emoji.Name, message.UserID)
 
 	return err
@@ -139,6 +143,10 @@ func (reactionator *reactionator) Initiate() error {
 		msg, err = reactionator.discord.ChannelMessageSendEmbed(reactionator.channelID, content)
 	default:
 		return errors.New("Invalid default message type")
+	}
+
+	if err != nil {
+		return err
 	}
 
 	for _, value := range reactionator.reactionOrder {

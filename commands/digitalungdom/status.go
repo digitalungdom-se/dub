@@ -63,13 +63,16 @@ var Status = pkg.Command{
 			boardStatus += fmt.Sprintf("**%v**: %v\n", name, status)
 		}
 		cur.Close(context.TODO())
+		if err := cur.Err(); err != nil {
+			return err
+		}
 
 		serverStatus := "**digitalungdom.se**: online\n"
 		serverStatus += "**dub**: online"
 
 		var memberStatus string
 		digitalungdomCount, err := ctx.Server.Database.Collection("users").CountDocuments(context.TODO(), bson.M{})
-		if err := cur.Err(); err != nil {
+		if err != nil {
 			return err
 		}
 
@@ -86,8 +89,8 @@ var Status = pkg.Command{
 			AddField("__**MEDLEMMAR**__", memberStatus).
 			MessageEmbed
 
-		ctx.ReplyEmbed(embed)
+		_, err = ctx.ReplyEmbed(embed)
 
-		return nil
+		return err
 	},
 }

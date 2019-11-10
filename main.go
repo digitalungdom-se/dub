@@ -109,7 +109,7 @@ func messageHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 			return
 		}
 
-		memberAdd := &discordgo.GuildMemberAdd{member}
+		memberAdd := &discordgo.GuildMemberAdd{Member: member}
 
 		guildMemberAddHandler(discord, memberAdd)
 		return
@@ -185,12 +185,16 @@ func messageHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 
 	err = command.Execute(ctx)
 	if err != nil {
-		log.Print(fmt.Sprintf("Error exectuing: %v ", message.Content), err)
+		log.Print(fmt.Sprintf("Error executing: %v ", message.Content), err)
 	}
 }
 
 func guildMemberAddHandler(discord *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	gifbuff, err := pkg.NameToGif(member.User.Username, member.User.AvatarURL("128"))
+	if err != nil {
+		log.Print("Error creating user gif:", err)
+		return
+	}
 	reader := bytes.NewReader((*gifbuff).Bytes())
 
 	_, err = discord.ChannelFileSendWithMessage(server.Channels.General.ID,
@@ -198,14 +202,15 @@ func guildMemberAddHandler(discord *discordgo.Session, member *discordgo.GuildMe
 		"welcome.gif",
 		reader)
 	if err != nil {
-		fmt.Print(err)
+		log.Print("Error sending welcome message:", err)
+		return
 	}
 
 	var privateDM *discordgo.Channel
 
 	privateDM, err = discord.UserChannelCreate(member.User.ID)
 	if err != nil {
-		log.Print("Error welcoming user")
+		log.Print("Error creating private channel:", err)
 		return
 	}
 
@@ -220,6 +225,10 @@ func guildMemberAddHandler(discord *discordgo.Session, member *discordgo.GuildMe
 		member.User.Username)
 
 	_, err = discord.ChannelMessageSend(privateDM.ID, content)
+	if err != nil {
+		log.Print("Error sending private welcome message:", err)
+		return
+	}
 }
 
 func addReactionHandler(discord *discordgo.Session, message *discordgo.MessageReactionAdd) {
@@ -238,7 +247,12 @@ func addReactionHandler(discord *discordgo.Session, message *discordgo.MessageRe
 		return
 	}
 
-	server.ReactionListener.React(message.MessageReaction)
+	err = server.ReactionListener.React(message.MessageReaction)
+
+	if err != nil {
+		log.Print("Error reacting to message:", err)
+		return
+	}
 }
 
 func removeReactionHandler(discord *discordgo.Session, message *discordgo.MessageReactionRemove) {
@@ -258,7 +272,11 @@ func removeReactionHandler(discord *discordgo.Session, message *discordgo.Messag
 		return
 	}
 
-	server.ReactionListener.React(message.MessageReaction)
+	err = server.ReactionListener.React(message.MessageReaction)
+	if err != nil {
+		log.Print("Error reacting to message:", err)
+		return
+	}
 }
 
 func registerCommands(commandHandler *pkg.CommandHandler) {
