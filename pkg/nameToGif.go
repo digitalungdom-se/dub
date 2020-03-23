@@ -15,6 +15,8 @@ import (
 	"github.com/tfriedel6/canvas/backend/softwarebackend"
 )
 
+const FONTPATH = "./assets/fonts/unifont.ttf"
+
 func NameToGif(name string, avatarURL string) (*bytes.Buffer, error) {
 	gifAnimation := &gif.GIF{
 		Image:     make([]*image.Paletted, 100),
@@ -69,11 +71,11 @@ func NameToGif(name string, avatarURL string) (*bytes.Buffer, error) {
 	cv.StrokeRect(0, 0, w, h)
 
 	var nameFont float64 = 70
-	cv.SetFont("/usr/share/fonts/Unifont/Unifont.ttf", nameFont)
+	cv.SetFont(FONTPATH, nameFont)
 
 	for cv.MeasureText(name).Width > w-325 {
 		nameFont -= 1
-		cv.SetFont("/usr/share/fonts/Unifont/Unifont.ttf", nameFont)
+		cv.SetFont(FONTPATH, nameFont)
 	}
 
 	for i := 0; i < len(name)+1; i++ {

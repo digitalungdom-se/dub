@@ -14,7 +14,7 @@ var Info = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
+	Execute: func(ctx *pkg.Context) error {
 		embed := pkg.NewEmbed().
 			SetTitle("__**INFORMATION OM BOTEN**__").
 			AddField("VERSION", "1.0").
@@ -23,8 +23,8 @@ var Info = pkg.Command{
 			InlineAllFields().
 			SetColor(4086462).MessageEmbed
 
-		context.ReplyEmbed(embed)
+		_, err := ctx.ReplyEmbed(embed)
 
-		return nil
+		return err
 	},
 }

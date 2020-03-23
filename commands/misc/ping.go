@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/digitalungdom-se/dub/pkg"
-	"github.com/hassieswift621/discord-goflake"
 )
 
 var Ping = pkg.Command{
@@ -18,25 +18,23 @@ var Ping = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
-		snowflake, err := dgoflake.ParseString(context.Message.ID)
-
+	Execute: func(ctx *pkg.Context) error {
+		messageTime, err := discordgo.SnowflakeTimestamp(ctx.Message.ID)
 		if err != nil {
 			return err
 		}
 
-		messageTime := snowflake.Timestamp().UnixNano() / 1000000
 		timeNow := time.Now().UnixNano() / 1000000
 
-		ping := timeNow - messageTime
+		ping := timeNow - (messageTime.UnixNano() / 1000000)
 
 		embed := pkg.NewEmbed().
 			SetTitle(":ping_pong:").
 			SetDescription(fmt.Sprintf("%vms", ping)).
 			SetColor(4086462).MessageEmbed
 
-		context.ReplyEmbed(embed)
+		_, err = ctx.ReplyEmbed(embed)
 
-		return nil
+		return err
 	},
 }

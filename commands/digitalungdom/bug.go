@@ -1,7 +1,6 @@
 package digitalungdom
 
 import (
-	"context"
 	"strings"
 
 	"github.com/digitalungdom-se/dub/pkg"
@@ -20,8 +19,8 @@ var Bug = pkg.Command{
 
 	Execute: func(ctx *pkg.Context) error {
 		if len(ctx.Args) < 3 {
-			ctx.Reply("Du måste ge en anledning")
-			return nil
+			_, err := ctx.Reply("Du måste ge en anledning på minst tre ord.")
+			return err
 		}
 
 		bug := bson.M{
@@ -30,9 +29,15 @@ var Bug = pkg.Command{
 			"message": strings.Join(ctx.Args, " "),
 			"author":  ctx.Message.Author.ID}
 
-		ctx.Server.Database.Collection("notifications").InsertOne(context.TODO(), bug)
+		err := ctx.Server.Database.InsertNotification(bug)
+		if err != nil {
+			return err
+		}
 
-		ctx.Reply("Du har nu anmält denna bugg till Digital Ungdom. Tack för din medverkan!")
+		_, err = ctx.Reply("Du har nu anmält denna bugg till Digital Ungdom. Tack för din medverkan!")
+		if err != nil {
+			return err
+		}
 
 		return nil
 	},

@@ -13,7 +13,7 @@ type (
 		Execute     func(*Context) error
 	}
 
-	Commands map[string]*Command
+	Commands map[string]Command
 
 	CommandHandler struct {
 		commands Commands
@@ -39,7 +39,7 @@ func (handler *CommandHandler) GetCommands(group string) Commands {
 	}
 }
 
-func (handler *CommandHandler) GetCommand(name string) (*Command, bool) {
+func (handler *CommandHandler) GetCommand(name string) (Command, bool) {
 	command, found := handler.commands[name]
 
 	if found {
@@ -54,9 +54,9 @@ func (handler *CommandHandler) GetCommand(name string) (*Command, bool) {
 		}
 	}
 
-	return nil, false
+	return Command{}, false
 }
 
-func (handler *CommandHandler) Register(command *Command) {
+func (handler *CommandHandler) Register(command Command) {
 	handler.commands[command.Name] = command
 }

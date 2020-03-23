@@ -4,8 +4,7 @@ import (
 	"errors"
 
 	"github.com/bwmarrin/discordgo"
-	"go.mongodb.org/mongo-driver/mongo"
-	gomail "gopkg.in/gomail.v2"
+	"github.com/digitalungdom-se/dub/internal"
 )
 
 type (
@@ -19,15 +18,17 @@ type (
 		Channels         channels
 		Roles            roles
 		ReactionListener *ReactionListener
-		Database         *mongo.Database
-		Dialer           *gomail.Dialer
+		Database         *internal.Database
+		Mailer           *internal.Mailer
 		Bot              *discordgo.Member
+		Ready            bool
 	}
 
 	channels struct {
 		General *discordgo.Channel
 		Bot     *discordgo.Channel
 		Music   *discordgo.Channel
+		Regler  *discordgo.Channel
 	}
 
 	roles struct {
@@ -36,41 +37,44 @@ type (
 )
 
 func NewServer(config Config, discord *discordgo.Session, reactionListener *ReactionListener,
-	database *mongo.Database, dialer *gomail.Dialer, commandHandler *CommandHandler) (*Server, error) {
+	database *internal.Database, mailer *internal.Mailer, commandHandler *CommandHandler) *Server {
 
 	server := new(Server)
-	var err error
 
 	server.Config = config
 	server.CommandHandler = commandHandler
 	server.Discord = discord
 	server.Database = database
-	server.Dialer = dialer
+	server.Mailer = mailer
 	server.ReactionListener = reactionListener
 	server.Discord.State.MaxMessageCount = 5
+	server.Ready = false
 
-	var guild *discordgo.Guild
-	guild, err = discord.Guild(config.GuildID)
+	return server
+}
+
+func (server *Server) Init() error {
+	guild, err := server.Discord.Guild(server.Config.GuildID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	server.Discord.State.GuildAdd(guild)
-	server.Guild, err = server.Discord.State.Guild(config.GuildID)
+	server.Guild, err = server.Discord.State.Guild(server.Config.GuildID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	discordStatus := new(discordgo.UpdateStatusData)
 	discordStatus.Game = new(discordgo.Game)
 
-	discord.UpdateStatusComplex(*discordStatus)
+	server.Discord.UpdateStatusComplex(*discordStatus)
 	server.Status = discordStatus
 
 	server.Channels = channels{}
-	channels, err := discord.GuildChannels(config.GuildID)
+	channels, err := server.Discord.GuildChannels(server.Config.GuildID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	for _, channel := range channels {
@@ -84,20 +88,23 @@ func NewServer(config Config, discord *discordgo.Session, reactionListener *Reac
 		case "general":
 			server.Discord.State.ChannelAdd(channel)
 			server.Channels.General, err = server.Discord.State.Channel(channel.ID)
+		case "regler":
+			server.Discord.State.ChannelAdd(channel)
+			server.Channels.Regler, err = server.Discord.State.Channel(channel.ID)
 		}
 
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
 	for _, role := range server.Guild.Roles {
 		if role.Name == "admin" {
-			server.Discord.State.RoleAdd(config.GuildID, role)
-			server.Roles.Admin, err = server.Discord.State.Role(config.GuildID, role.ID)
+			server.Discord.State.RoleAdd(server.Config.GuildID, role)
+			server.Roles.Admin, err = server.Discord.State.Role(server.Config.GuildID, role.ID)
 
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			break
@@ -108,32 +115,34 @@ func NewServer(config Config, discord *discordgo.Session, reactionListener *Reac
 		server.Channels.Music == nil ||
 		server.Channels.Bot == nil ||
 		server.Roles.Admin == nil {
-		return nil, errors.New("Could not find channels or roles.")
+		return errors.New("could not find channels or roles")
 	}
 
-	bot, err := discord.User("@me")
+	bot, err := server.Discord.User("@me")
 	if err != nil {
-		return nil, err
+		return err
 	}
 	for _, member := range server.Guild.Members {
 		if member.User.ID == bot.ID {
-			err = discord.State.MemberAdd(member)
+			err = server.Discord.State.MemberAdd(member)
 			if err != nil {
-				return nil, err
+				return err
 			}
 		}
 	}
 
-	server.Bot, err = discord.State.Member(config.GuildID, bot.ID)
+	server.Bot, err = server.Discord.State.Member(server.Config.GuildID, bot.ID)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if server.Bot == nil {
-		return nil, errors.New("Could not find bot")
+		return errors.New("could not find bot")
 	}
 
 	server.Controller, err = NewController(server)
 
-	return server, err
+	server.Ready = true
+
+	return err
 }

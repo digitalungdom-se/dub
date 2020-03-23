@@ -1,7 +1,6 @@
 package misc
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -31,13 +30,14 @@ var Help = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
-		context.Delete()
-		if len(context.Args) != 0 {
-			command, found := context.Server.CommandHandler.GetCommand(context.Args[0])
+	Execute: func(ctx *pkg.Context) error {
+		if len(ctx.Args) != 0 {
+			command, found := ctx.Server.CommandHandler.GetCommand(ctx.Args[0])
 
 			if !found {
-				return errors.New("Kommandot kunde inte hittas")
+				_, err := ctx.Discord.ChannelMessageSend(ctx.Message.ChannelID,
+					"Kunde inte hitta information om kommandot då den inte finns")
+				return err
 			}
 
 			embed := pkg.NewEmbed().
@@ -51,8 +51,7 @@ var Help = pkg.Command{
 				embed.AddField("ALIAS", fmt.Sprintf("`%v`", strings.Join(command.Aliases[:], ", ")))
 			}
 
-			_, err := context.ReplyEmbed(embed.MessageEmbed)
-
+			_, err := ctx.ReplyEmbed(embed.MessageEmbed)
 			if err != nil {
 				return err
 			}
@@ -60,8 +59,16 @@ var Help = pkg.Command{
 			return nil
 		}
 
-		commands := context.Server.CommandHandler.GetCommands("")
-		groups := make(map[string][]*pkg.Command)
+		if !ctx.IsDM() {
+			_, err := ctx.Reply("Ett direkt meddelande har skickats till dig med alla kommandon. Du finner dem längst upp till höger")
+
+			if err != nil {
+				return err
+			}
+		}
+
+		commands := ctx.Server.CommandHandler.GetCommands("")
+		groups := make(map[string][]pkg.Command)
 
 		for _, command := range commands {
 			groups[command.Group] = append(groups[command.Group], command)
@@ -78,9 +85,9 @@ var Help = pkg.Command{
 
 		admin := false
 
-		for _, member := range context.Server.Guild.Members {
-			if member.User.ID == context.Message.Author.ID {
-				if pkg.StringInSlice(context.Server.Roles.Admin.ID, member.Roles) {
+		for _, member := range ctx.Server.Guild.Members {
+			if member.User.ID == ctx.Message.Author.ID {
+				if pkg.StringInSlice(ctx.Server.Roles.Admin.ID, member.Roles) {
 					description += "🚨 **--** Admin kommandon\n"
 					admin = true
 				}
@@ -110,13 +117,13 @@ var Help = pkg.Command{
 			embeds[group] = embed.MessageEmbed
 		}
 
-		privateDM, err := context.Discord.UserChannelCreate(context.Message.Author.ID)
+		privateDM, err := ctx.Discord.UserChannelCreate(ctx.Message.Author.ID)
 		if err != nil {
 			return err
 		}
 
-		reactionator := pkg.NewReactionator(privateDM.ID, context.Discord, context.Server.ReactionListener,
-			true, pkg.ReactionatorTypeHelp, context.Message.Author)
+		reactionator := pkg.NewReactionator(privateDM.ID, ctx.Discord, ctx.Server.ReactionListener,
+			true, true, pkg.ReactionatorTypeHelp, ctx.Message.Author)
 
 		err = reactionator.AddDefaultPage(groupReactions["info"], embeds["info"])
 		if err != nil {
@@ -144,7 +151,7 @@ var Help = pkg.Command{
 
 		reactionator.CloseAfter(3 * time.Minute)
 
-		if activeReactionators, ok := context.Server.ReactionListener.Users[context.Message.Author.ID]; ok {
+		if activeReactionators, ok := ctx.Server.ReactionListener.Users[ctx.Message.Author.ID]; ok {
 			if activeReactionators.Help != nil {
 				activeReactionators.Help.Close()
 			}
@@ -153,15 +160,6 @@ var Help = pkg.Command{
 		err = reactionator.Initiate()
 		if err != nil {
 			return err
-		}
-
-		if context.Message.ChannelID != privateDM.ID {
-			_, err = context.Reply("Ett direkt meddelande har skickats till dig " +
-				"med alla kommandon. Du finner dem längst upp till höger")
-
-			if err != nil {
-				return err
-			}
 		}
 
 		return nil

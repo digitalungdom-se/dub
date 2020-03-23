@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -17,9 +18,9 @@ var DubStatus = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   true,
 
-	Execute: func(context *pkg.Context) error {
-		status := strings.ToUpper(context.Args[0])
-		statusText := strings.Join(context.Args[1:], " ")
+	Execute: func(ctx *pkg.Context) error {
+		status := strings.ToUpper(ctx.Args[0])
+		statusText := strings.Join(ctx.Args[1:], " ")
 		discordStatus := new(discordgo.UpdateStatusData)
 		discordStatus.Game = new(discordgo.Game)
 
@@ -33,15 +34,24 @@ var DubStatus = pkg.Command{
 		case "WATCHING":
 			discordStatus.Game.Type = discordgo.GameTypeWatching
 		default:
-			context.Reply("Felaktig status")
+			_, err := ctx.Reply("Felaktig status")
+			if err != nil {
+				return err
+			}
 			return nil
 		}
 
 		discordStatus.Status = statusText
 		discordStatus.Game.Name = statusText
 
-		context.Discord.UpdateStatusComplex(*discordStatus)
-		context.Server.Status = discordStatus
+		err := ctx.Discord.UpdateStatusComplex(*discordStatus)
+		if err != nil {
+			return err
+		}
+
+		ctx.Server.Status = discordStatus
+
+		ctx.Reply(fmt.Sprintf("Sätter statusen till `%v %v`", status, statusText))
 
 		return nil
 	},

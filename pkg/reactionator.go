@@ -29,9 +29,11 @@ type (
 		reactionOrder    []string
 		defaultPage      interface{}
 		ListenToRemove   bool
+		removeReaction   bool
 		reactionListener *ReactionListener
 		messageType      ReactionatorType
 		user             *discordgo.User
+		isDM             bool
 	}
 
 	activeReactionators struct {
@@ -57,11 +59,13 @@ func (reactionListener *ReactionListener) React(message *discordgo.MessageReacti
 	var ok bool
 	var err error
 
-	if reactionator, ok = reactionListener.Messages[message.MessageID]; ok == false {
+	if reactionator, ok = reactionListener.Messages[message.MessageID]; !ok {
 		return nil
 	}
 
 	switch reactionator.reactions[message.Emoji.Name].(type) {
+	case func(message *discordgo.MessageReaction):
+		reactionator.reactions[message.Emoji.Name].(func(*discordgo.MessageReaction))(message)
 	case func():
 		reactionator.reactions[message.Emoji.Name].(func())()
 	case *discordgo.MessageEmbed:
@@ -71,28 +75,45 @@ func (reactionListener *ReactionListener) React(message *discordgo.MessageReacti
 		reactionListener.discord.ChannelMessageEdit(reactionator.channelID, reactionator.Message.ID,
 			reactionator.reactions[message.Emoji.Name].(string))
 	default:
-		err = errors.New("Invalid default message type")
+		if !reactionator.isDM {
+			err = reactionListener.discord.MessageReactionRemove(message.ChannelID, message.MessageID, message.Emoji.Name, message.UserID)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	if err != nil {
 		return err
 	}
 
-	err = reactionListener.discord.MessageReactionRemove(message.ChannelID, message.MessageID, message.Emoji.Name, message.UserID)
+	if !reactionator.isDM && reactionator.removeReaction {
+		err = reactionListener.discord.MessageReactionRemove(message.ChannelID, message.MessageID, message.Emoji.Name, message.UserID)
+	}
 
 	return err
 }
 
 func NewReactionator(channelID string, discord *discordgo.Session, reactionListener *ReactionListener,
-	listenToRemove bool, messageType ReactionatorType, user *discordgo.User) *reactionator {
+	listenToRemove bool, removeReaction bool, messageType ReactionatorType, user *discordgo.User) *reactionator {
 	reactionator := new(reactionator)
 	reactionator.channelID = channelID
 	reactionator.discord = discord
 	reactionator.reactions = make(map[string]interface{})
 	reactionator.reactionListener = reactionListener
 	reactionator.ListenToRemove = listenToRemove
+	reactionator.removeReaction = removeReaction
 	reactionator.messageType = messageType
 	reactionator.user = user
+
+	channel, err := discord.State.Channel(channelID)
+	if err != nil {
+		if channel, err = discord.Channel(channelID); err != nil {
+			reactionator.isDM = false
+		}
+	}
+
+	reactionator.isDM = channel.Type == discordgo.ChannelTypeDM
 
 	return reactionator
 }
@@ -102,11 +123,15 @@ func (reactionator *reactionator) AddDefaultPage(reaction string, content interf
 	case string:
 	case *discordgo.MessageEmbed:
 	default:
-		return errors.New("Invalid default message type")
+		return errors.New("invalid default message type")
 	}
 
 	reactionator.defaultPage = content
-	err := reactionator.Add(reaction, content)
+
+	var err error
+	if reaction != "" {
+		err = reactionator.Add(reaction, content)
+	}
 
 	return err
 }
@@ -114,14 +139,15 @@ func (reactionator *reactionator) AddDefaultPage(reaction string, content interf
 func (reactionator *reactionator) Add(reaction string, action interface{}) error {
 	switch action.(type) {
 	case func():
+	case func(*discordgo.MessageReaction):
 	case *discordgo.MessageEmbed:
 	case string:
 	default:
-		return errors.New("Invalid action type")
+		return errors.New("invalid action type")
 	}
 
 	if _, ok := reactionator.reactions[reaction]; ok {
-		return errors.New("Reaction already exists")
+		return errors.New("reaction already exists")
 	}
 
 	reactionator.reactions[reaction] = action
@@ -142,7 +168,7 @@ func (reactionator *reactionator) Initiate() error {
 		content := reactionator.defaultPage.(*discordgo.MessageEmbed)
 		msg, err = reactionator.discord.ChannelMessageSendEmbed(reactionator.channelID, content)
 	default:
-		return errors.New("Invalid default message type")
+		return errors.New("invalid default message type")
 	}
 
 	if err != nil {
@@ -150,7 +176,10 @@ func (reactionator *reactionator) Initiate() error {
 	}
 
 	for _, value := range reactionator.reactionOrder {
-		reactionator.discord.MessageReactionAdd(reactionator.channelID, msg.ID, value)
+		err = reactionator.discord.MessageReactionAdd(reactionator.channelID, msg.ID, value)
+		if err != nil {
+			return err
+		}
 	}
 
 	reactionator.reactionListener.listen(msg.ID, reactionator)
@@ -182,11 +211,9 @@ func (reactionator *reactionator) Close() {
 		SetTitle("Denna sida är stängd").
 		SetColor(16711680).
 		MessageEmbed
-	_, err := reactionator.discord.ChannelMessageEditEmbed(reactionator.channelID, reactionator.Message.ID, embed)
 
+	reactionator.discord.ChannelMessageEditEmbed(reactionator.channelID, reactionator.Message.ID, embed)
 	reactionator.discord.State.MessageRemove(reactionator.Message)
-	if err != nil {
-	}
 
 	delete(reactionator.reactionListener.Messages, reactionator.Message.ID)
 	if reactionator.messageType == ReactionatorTypeHelp {

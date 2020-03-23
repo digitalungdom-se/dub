@@ -14,9 +14,9 @@ var Stop = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
-		context.Delete()
-		context.Server.Controller.Stop()
+	Execute: func(ctx *pkg.Context) error {
+		ctx.Delete()
+		ctx.Server.Controller.Stop()
 
 		return nil
 	},

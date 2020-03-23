@@ -85,10 +85,6 @@ func (controller *Controller) Play() error {
 	controller.streamer = dca.NewStream(controller.encoder, controller.voiceConnection, done)
 	err = <-done
 
-	if err != nil && err != io.EOF && err != io.ErrUnexpectedEOF {
-		return err
-	}
-
 	if err == io.EOF {
 		if !controller.skip {
 			controller.end()
@@ -99,7 +95,9 @@ func (controller *Controller) Play() error {
 }
 
 func (controller *Controller) end() error {
-	controller.encoder.Cleanup()
+	if controller.encoder != nil {
+		controller.encoder.Cleanup()
+	}
 
 	if len(controller.musicQueue) <= 1 {
 		controller.musicQueue = []Song{}
@@ -111,10 +109,13 @@ func (controller *Controller) end() error {
 
 	if len(controller.musicQueue) == 0 {
 		controller.server.Discord.UpdateStatusComplex(*controller.server.Status)
-		err := controller.voiceConnection.Disconnect()
-		controller.voiceConnection = nil
-		if err != nil {
-			return err
+
+		if controller.voiceConnection != nil {
+			err := controller.voiceConnection.Disconnect()
+			controller.voiceConnection = nil
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -204,12 +205,14 @@ func (controller *Controller) Stop() {
 }
 
 func (controller *Controller) PauseResume() {
-	if controller.streamer.Paused() {
-		controller.streamer.SetPaused(false)
-		return
-	}
+	if controller.streamer != nil {
+		if controller.streamer.Paused() {
+			controller.streamer.SetPaused(false)
+			return
+		}
 
-	controller.streamer.SetPaused(true)
+		controller.streamer.SetPaused(true)
+	}
 }
 
 func (controller *Controller) NewControllerMessage() error {
@@ -246,7 +249,7 @@ func (controller *Controller) NewControllerMessage() error {
 	}
 
 	reactionator := NewReactionator(controller.server.Channels.Music.ID,
-		controller.server.Discord, controller.server.ReactionListener, false, ReactionatorTypeController, nil)
+		controller.server.Discord, controller.server.ReactionListener, false, true, ReactionatorTypeController, nil)
 
 	reactionator.AddDefaultPage("", embed)
 

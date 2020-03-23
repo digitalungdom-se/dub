@@ -1,7 +1,6 @@
 package digitalungdom
 
 import (
-	"context"
 	"strings"
 
 	"github.com/digitalungdom-se/dub/pkg"
@@ -19,7 +18,12 @@ var Report = pkg.Command{
 	AdminOnly:   false,
 
 	Execute: func(ctx *pkg.Context) error {
-		ctx.Delete()
+		if !ctx.IsDM() {
+			err := ctx.Delete()
+			if err != nil {
+				return err
+			}
+		}
 
 		if len(ctx.Message.Mentions) == 0 {
 			ctx.Reply("Du måste anmäla någon")
@@ -38,10 +42,13 @@ var Report = pkg.Command{
 			"author":   ctx.Message.Author.ID,
 			"reported": ctx.Message.Mentions[0].ID}
 
-		ctx.Server.Database.Collection("notifications").InsertOne(context.TODO(), report)
+		err := ctx.Server.Database.InsertNotification(report)
+		if err != nil {
+			return err
+		}
 
-		ctx.DM("Du har nu anmält denna person till Digital Ungdom. Tack för din medverkan!")
+		err = ctx.DM("Du har nu anmält denna person till Digital Ungdom. Tack för din medverkan!")
 
-		return nil
+		return err
 	},
 }

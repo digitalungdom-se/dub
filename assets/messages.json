@@ -1,0 +1,89 @@
+{
+  "messages": {
+    "wecoleGlobal": {
+      "swedish": "Välkommen till Digital Ungdoms Discord server <@%v>!"
+    },
+    "welcomeDM": {
+      "swedish": "Hej **%v** och välkommen till *Digital Ungdoms* Discord server. Jag är boten som hjälper till med kanalen. För att se alla mina funktioner skriv `$help` till mig.\n\nOm du inte redan har ett *Digital Ungdom* konto så rekommenderar jag starkt att du skaffar ett. Som medlem kan du bland annat skriva på vårt forum (https://digitalungdom.se/agora). Du kan enkelt bli medlem genom följande länk: https://digitalungdom.se/bli-medlem\n\n Om du redan är medlem så kan du koppla ditt *Digital Ungdom* konto till ditt Discord konto genom att skriva `$verify` och sedan ditt användarnamn eller epost. Till exempel `$verify username`\n\nVi synns där inne!"
+    }
+  },
+  "errors": {
+    "commandNotFound": {
+      "swedish": "Kunde inte hitta kommandot. Testa `$help` för att se alla kommandon."
+    },
+    "serverOnly": {
+      "swedish": "Kommandot är bara tillgängligt i servern, var snäll och använd den där."
+    },
+    "adminOnly": {
+      "swedish": "Detta kommando är bara tillgänglig för admins."
+    },
+    "voiceChannelOnly": {
+      "swedish": "Du måste vara i en ljudkanal för att styra boten."
+    },
+    "sameVoiceChannel": {
+      "swedish": "Du måste vara i samma ljudkanal som boten för att styra den."
+    },
+    "incorrectStatus": {
+      "swedish": "Felaktig status."
+    }
+  },
+  "commands": {
+    "bug": {
+      "atleastThreeWords": {
+        "swedish": "Du måste ge en anledning på minst tre ord."
+      },
+      "success": {
+        "swedish": "Du har nu anmält denna bugg till Digital Ungdom. Tack för din medverkan!"
+      }
+    },
+    "idea": {
+      "atleastThreeWords": {
+        "swedish": "Du måste ge en förslag på minst tre ord."
+      },
+      "success": {
+        "swedish": "Du har nu skickat in ditt förslag. Tack för din medverkan!"
+      }
+    },
+    "report": {
+      "missingReportee": {
+        "swedish": "Du måste anmäla någon"
+      },
+      "missingReason": {
+        "swedish": "Du måste ge en anledning"
+      },
+      "success": {
+        "swedish": "Du har nu anmält denna person till Digital Ungdom. Tack för din medverkan!"
+      }
+    },
+    "verify": {
+      "noInput": {
+        "swedish": "Du måste ange ditt användarnamn eller email."
+      },
+      "alreadyVerified": {
+        "swedish": "Du är redan verifierad"
+      },
+      "usernameOrEmail": {
+        "swedish": "Du måste ange ditt användarnamn eller email."
+      },
+      "noAccount": {
+        "swedish": "Inget konto kunde hittas"
+      },
+      "alreadyConnected": {
+        "swedish": "Digital Ungdom kontot är redan kopplat till ett discord konto"
+      },
+      "emailSent": {
+        "swedish": "Ett email har nu skickats till dig, följ instruktionerna där för att komma vidare."
+      }
+    },
+    "slap": {
+      "success": {
+        "swedish": "Du har varit riktigt stygg <@%v>"
+      }
+    },
+    "play": {
+      "missingLink": {
+        "swedish": "Du måste skicka en youtube länk."
+      }
+    }
+  }
+}

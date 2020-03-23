@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"regexp"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -34,19 +35,91 @@ func (context *Context) Delete() error {
 	return err
 }
 
+func (context *Context) ReplyNoMention(content string) (*discordgo.Message, error) {
+	msg, err := context.Discord.ChannelMessageSend(context.TextChannel.ID, content)
+
+	return msg, err
+}
+
+func (context *Context) ReplyEmbedNoMention(embed *discordgo.MessageEmbed) (*discordgo.Message, error) {
+	msg, err := context.Discord.ChannelMessageSendEmbed(context.TextChannel.ID, embed)
+
+	return msg, err
+}
+
+func (context *Context) ReplyComplexNoMention(message *discordgo.MessageSend) (*discordgo.Message, error) {
+	msg, err := context.Discord.ChannelMessageSendComplex(context.TextChannel.ID, message)
+
+	return msg, err
+}
+
 func (context *Context) Reply(content string) (*discordgo.Message, error) {
+	if !context.IsDM() {
+		content = context.Message.Author.Mention() + ", " + strings.ToLower(string(content[0])) + content[1:]
+	}
+
 	msg, err := context.Discord.ChannelMessageSend(context.TextChannel.ID, content)
 
 	return msg, err
 }
 
 func (context *Context) ReplyEmbed(embed *discordgo.MessageEmbed) (*discordgo.Message, error) {
-	msg, err := context.Discord.ChannelMessageSendEmbed(context.TextChannel.ID, embed)
+	complexMessage := &discordgo.MessageSend{
+		Embed: embed,
+	}
+
+	if !context.IsDM() {
+		complexMessage.Content = context.Message.Author.Mention()
+	}
+
+	msg, err := context.Discord.ChannelMessageSendComplex(context.TextChannel.ID, complexMessage)
 
 	return msg, err
 }
 
+func (context *Context) ReplyComplex(message *discordgo.MessageSend) (*discordgo.Message, error) {
+	if !context.IsDM() {
+		originalContent := message.Content
+		message.Content = context.Message.Author.Mention()
+
+		if len(originalContent) > 3 {
+			message.Content = message.Content + ", " + strings.ToLower(string(message.Content[0])) + message.Content[1:]
+		} else {
+			message.Content = message.Content + ", " + originalContent
+		}
+	}
+
+	msg, err := context.Discord.ChannelMessageSendComplex(context.TextChannel.ID, message)
+
+	return msg, err
+}
+
+func (context *Context) IsDM() bool {
+	channel, err := context.Server.Discord.State.Channel(context.Message.ChannelID)
+	if err != nil {
+		if channel, err = context.Server.Discord.Channel(context.Message.ChannelID); err != nil {
+			return false
+		}
+	}
+
+	return channel.Type == discordgo.ChannelTypeDM
+}
+
+func (context *Context) DM(content string) error {
+	privateDM, err := context.Discord.UserChannelCreate(context.Message.Author.ID)
+	if err != nil {
+		return err
+	}
+
+	_, err = context.Discord.ChannelMessageSend(privateDM.ID, content)
+
+	return err
+}
+
 func (context *Context) GetMentions() ([]string, error) {
+	if len(context.Message.Mentions) == 0 {
+		return nil, errors.New("no mentions")
+	}
 	r, err := regexp.Compile(`<@!(\d{18})>`)
 
 	if err != nil {
@@ -71,7 +144,7 @@ func (context *Context) GetVoiceChannel() (*discordgo.VoiceState, error) {
 			}
 		}
 	}
-	return nil, errors.New("Could not find user's voice state")
+	return nil, errors.New("could not find user's voice state")
 }
 
 func (context *Context) JoinUserVoiceChannel() (*discordgo.VoiceConnection, error) {
@@ -87,15 +160,4 @@ func (context *Context) JoinUserVoiceChannel() (*discordgo.VoiceConnection, erro
 	}
 
 	return voiceConnection, nil
-}
-
-func (context *Context) DM(content string) error {
-	privateDM, err := context.Discord.UserChannelCreate(context.Message.Author.ID)
-	if err != nil {
-		return err
-	}
-
-	_, err = context.Discord.ChannelMessageSend(privateDM.ID, content)
-
-	return err
 }

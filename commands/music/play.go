@@ -9,18 +9,20 @@ var Play = pkg.Command{
 	Description: "Spelar en låt",
 	Aliases:     []string{"spela", "pl"},
 	Group:       "music",
-	Usage:       "play play <youtube link>",
+	Usage:       "play <youtube link>",
 	Example:     "play https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
-		context.Delete()
-		if len(context.Args) == 0 {
+	Execute: func(ctx *pkg.Context) error {
+		ctx.Delete()
+
+		if len(ctx.Args) == 0 {
+			ctx.Reply("Du måste skicka en youtube länk.")
 			return nil
 		}
 
-		err := context.Server.Controller.AddToQueue(context)
+		err := ctx.Server.Controller.AddToQueue(ctx)
 
 		return err
 	},

@@ -14,9 +14,9 @@ var Skip = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
-		context.Delete()
-		context.Server.Controller.Skip()
+	Execute: func(ctx *pkg.Context) error {
+		ctx.Delete()
+		ctx.Server.Controller.Skip()
 
 		return nil
 	},

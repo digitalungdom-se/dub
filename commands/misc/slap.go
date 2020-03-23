@@ -1,8 +1,6 @@
 package misc
 
 import (
-	"fmt"
-
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
@@ -16,19 +14,13 @@ var Slap = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
-		if len(context.Message.Mentions) == 0 {
-			context.Reply("Vem har varit stygg?")
+	Execute: func(ctx *pkg.Context) error {
+		mentions := ctx.Message.Mentions
+		if len(mentions) == 0 {
 			return nil
 		}
 
-		slapped, err := context.GetMentions()
-
-		if err != nil {
-			return err
-		}
-
-		context.Reply(fmt.Sprintf("Du har varit riktigt stygg <@%v>", slapped[0]))
+		ctx.ReplyNoMention("Du har varit riktigt stygg " + ctx.Message.Mentions[0].Mention())
 
 		return nil
 	},

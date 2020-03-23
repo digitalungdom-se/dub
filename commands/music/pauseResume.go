@@ -14,9 +14,9 @@ var PauseResume = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(context *pkg.Context) error {
-		context.Delete()
-		context.Server.Controller.PauseResume()
+	Execute: func(ctx *pkg.Context) error {
+		ctx.Delete()
+		ctx.Server.Controller.PauseResume()
 
 		return nil
 	},

@@ -1,13 +1,11 @@
 package digitalungdom
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/digitalungdom-se/dub/pkg"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var Status = pkg.Command{
@@ -33,45 +31,29 @@ var Status = pkg.Command{
 			charles,
 		}}}
 
-		findOptions := options.Find()
-		findOptions.Projection = bson.M{
-			"details.name":   true,
-			"profile.status": true,
-		}
-
-		cur, err := ctx.Server.Database.Collection("users").Find(context.TODO(), filter, findOptions)
+		board, err := ctx.Server.Database.GetUsersByID(filter)
 		if err != nil {
 			return err
 		}
 
 		var boardStatus string
-		for cur.Next(context.TODO()) {
-			var user bson.M
-
-			err := cur.Decode(&user)
-			if err != nil {
-				return err
-			}
-
-			name := user["details"].(primitive.M)["name"].(string)
+		for _, member := range board {
+			name := member.Details.Name
 			status := "Inget 🤷"
 
-			if user["profile"].(primitive.M)["status"] != nil {
-				status = user["profile"].(primitive.M)["status"].(string)
+			if member.Profile.Status != "" {
+				status = member.Profile.Status
 			}
 
 			boardStatus += fmt.Sprintf("**%v**: %v\n", name, status)
-		}
-		cur.Close(context.TODO())
-		if err := cur.Err(); err != nil {
-			return err
+
 		}
 
 		serverStatus := "**digitalungdom.se**: online\n"
 		serverStatus += "**dub**: online"
 
 		var memberStatus string
-		digitalungdomCount, err := ctx.Server.Database.Collection("users").CountDocuments(context.TODO(), bson.M{})
+		digitalungdomCount, err := ctx.Server.Database.GetMemberCount()
 		if err != nil {
 			return err
 		}
