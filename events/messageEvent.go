@@ -38,7 +38,7 @@ func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.Mess
 			return
 		}
 
-		if !pkg.StringInSlice(string([]rune(message.Content)[0]), server.Config.Prefix) {
+		if len([]rune(message.Content)) == 0 || !pkg.StringInSlice(string([]rune(message.Content)[0]), server.Config.Prefix) {
 			return
 		}
 
