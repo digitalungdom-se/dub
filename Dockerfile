@@ -6,6 +6,8 @@ ENV GO111MODULE=on \
   GOOS=linux \
   GOARCH=amd64
 
+RUN apk --no-cache add ffmpeg
+
 # Move to working directory /build
 WORKDIR /build
 

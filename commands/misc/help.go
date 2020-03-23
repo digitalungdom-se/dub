@@ -60,7 +60,7 @@ var Help = pkg.Command{
 		}
 
 		if !ctx.IsDM() {
-			_, err := ctx.Reply("Ett direkt meddelande har skickats till dig med alla kommandon. Du finner dem längst upp till höger")
+			_, err := ctx.Reply("Ett direkt meddelande har skickats till dig med alla kommandon. Du finner dem längst upp till vänster.")
 
 			if err != nil {
 				return err
