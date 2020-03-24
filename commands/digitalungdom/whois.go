@@ -59,10 +59,12 @@ var Whois = pkg.Command{
 			userEmbed.AddField("__**URL**__", user.Profile.URL)
 		}
 
-		var colour int64
-		colour, err = strconv.ParseInt(user.Profile.Colour[1:], 16, 64)
-		if err != nil {
-			colour = 4086462
+		var colour int64 = 4086462
+		if user.Profile.Colour != "" {
+			colour, err = strconv.ParseInt(user.Profile.Colour[1:], 16, 64)
+			if err != nil {
+				colour = 4086462
+			}
 		}
 		userEmbed.SetColor(int(colour))
 
