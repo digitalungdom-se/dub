@@ -23,13 +23,13 @@ var Whois = pkg.Command{
 	AdminOnly:   false,
 
 	Execute: func(ctx *pkg.Context) error {
-		mentions, err := ctx.GetMentions()
-		if err != nil || len(mentions) == 0 {
+		if len(ctx.Message.Mentions) == 0 {
 			ctx.Reply("Du måste nämna en användare.")
 			return nil
 		}
+		userID := ctx.Message.Mentions[0].ID
 
-		user, err := ctx.Server.Database.GetUserByDiscordID(mentions[0])
+		user, err := ctx.Server.Database.GetUserByDiscordID(userID)
 		if err != nil {
 			ctx.Reply(fmt.Sprintf("Inget konto kunde hittas kopplat till den användare. %v borde verkligen koppla sitt konta genom `$verify <digital_ungdom_användarnamn>`!", ctx.Message.Mentions[0].Mention()))
 			return nil

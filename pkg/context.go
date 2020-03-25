@@ -2,8 +2,6 @@ package pkg
 
 import (
 	"errors"
-	"log"
-	"regexp"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -114,26 +112,6 @@ func (context *Context) DM(content string) error {
 	_, err = context.Discord.ChannelMessageSend(privateDM.ID, content)
 
 	return err
-}
-
-func (context *Context) GetMentions() ([]string, error) {
-	if len(context.Message.Mentions) == 0 {
-		return nil, errors.New("no mentions")
-	}
-	r, err := regexp.Compile(`<@!(\d{18})>`)
-
-	if err != nil {
-		log.Println("Error in regex,", err)
-		return []string{}, err
-	}
-	matches := r.FindAllStringSubmatch(context.Message.Content, -1)
-	mentions := make([]string, len(matches)-1)
-
-	for _, mention := range matches {
-		mentions = append(mentions, mention[1])
-	}
-
-	return mentions, nil
 }
 
 func (context *Context) GetVoiceChannel() (*discordgo.VoiceState, error) {
