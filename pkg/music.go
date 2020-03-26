@@ -130,7 +130,7 @@ func (controller *Controller) AddToQueue(context *Context) error {
 	songURL := context.Args[0]
 
 	u, err := url.ParseRequestURI(songURL)
-	if err != nil || u.Hostname() != "www.youtube.com" || u.Hostname() != "youtu.be" || u.Hostname() != "m.youtube.com" {
+	if err != nil || (u.Hostname() != "www.youtube.com" && u.Hostname() != "youtu.be" && u.Hostname() != "m.youtube.com") {
 		context.Reply("Du måste skicka en youtube-länk.")
 		return nil
 	}
