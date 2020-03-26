@@ -175,6 +175,8 @@ func (reactionator *reactionator) Initiate() error {
 		return err
 	}
 
+	time.Sleep(1 * time.Second)
+
 	for _, value := range reactionator.reactionOrder {
 		err = reactionator.discord.MessageReactionAdd(reactionator.channelID, msg.ID, value)
 		if err != nil {

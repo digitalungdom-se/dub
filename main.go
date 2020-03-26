@@ -100,4 +100,5 @@ func registerCommands(commandHandler *pkg.CommandHandler) {
 	commandHandler.Register(music.Skip)
 	commandHandler.Register(music.Stop)
 	commandHandler.Register(music.PauseResume)
+	commandHandler.Register(music.Controller)
 }

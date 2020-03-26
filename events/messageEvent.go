@@ -23,15 +23,16 @@ func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.Mess
 		}
 
 		if channel.Name == "music" {
-			if message.ID != server.Controller.Message.ID {
-				time.AfterFunc(5*time.Second, func() {
+			time.AfterFunc(5*time.Second, func() {
+				if message.ID != server.Controller.Message.ID {
 					err := discord.ChannelMessageDelete(message.ChannelID, message.ID)
 					if err != nil {
 						log.Print("Error deleting message", err)
 						return
 					}
-				})
-			}
+				}
+			})
+
 		}
 
 		if message.Author.Bot {
