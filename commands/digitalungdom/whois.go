@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Whois = pkg.Command{
+var Whois = internal.Command{
 	Name:        "whois",
 	Description: "Få Digital Ungdom kontot av en användare",
 	Aliases:     []string{"verifiera"},
@@ -22,14 +23,14 @@ var Whois = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		if len(ctx.Message.Mentions) == 0 {
 			ctx.Reply("Du måste nämna en användare.")
 			return nil
 		}
 		userID := ctx.Message.Mentions[0].ID
 
-		user, err := ctx.Server.Database.GetUserByDiscordID(userID)
+		user, err := server.Database.GetUserByDiscordID(userID)
 		if err != nil {
 			ctx.Reply(fmt.Sprintf("Inget konto kunde hittas kopplat till den användare. %v borde verkligen koppla sitt konta genom `$verify <digital_ungdom_användarnamn>`!", ctx.Message.Mentions[0].Mention()))
 			return nil

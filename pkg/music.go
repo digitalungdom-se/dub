@@ -18,43 +18,52 @@ var musicEmojis = map[string]string{
 
 type (
 	Controller struct {
-		server          *Server
-		musicQueue      []Song
-		Message         *discordgo.Message
-		playing         bool
-		volume          int
-		voiceConnection *discordgo.VoiceConnection
-		streamer        *dca.StreamingSession
-		encoder         *dca.EncodeSession
-		skip            bool
+		channel        *discordgo.Channel
+		discord        *discordgo.Session
+		guild          *discordgo.Guild
+		previousStatus *discordgo.UpdateStatusData
+
 		embed           *discordgo.MessageEmbed
+		Message         *discordgo.Message
+		voiceConnection *discordgo.VoiceConnection
+
+		encoder  *dca.EncodeSession
+		streamer *dca.StreamingSession
+
+		musicQueue []Song
+		playing    bool
+		skip       bool
+		volume     int
 	}
 
 	Song struct {
-		url         string
 		downloadURL string
-		requesterID string
 		metadata    *Metadata
+		requesterID string
+		url         string
 	}
 
 	Metadata struct {
-		title          string
-		thumbnailURL   string
 		author         string
 		authorImageURL string
 		authorURL      string
 		duration       string
+		thumbnailURL   string
+		title          string
 	}
 )
 
-func NewController(server *Server) (*Controller, error) {
-	controller := new(Controller)
+func NewController(discord *discordgo.Session, channel *discordgo.Channel, previousStatus *discordgo.UpdateStatusData, reactionListener *ReactionListener) (Controller, error) {
+	var err error
+	var controller Controller
 
-	controller.server = server
+	controller.discord = discord
+	controller.channel = channel
+	controller.previousStatus = previousStatus
 
-	controller.NewControllerMessage()
+	controller.NewControllerMessage(reactionListener)
 
-	return controller, nil
+	return controller, err
 }
 
 func (controller *Controller) Play() error {
@@ -78,7 +87,7 @@ func (controller *Controller) Play() error {
 	discordStatus.Game.Name = song.metadata.title
 	discordStatus.Game.Type = discordgo.GameTypeListening
 
-	controller.server.Discord.UpdateStatusComplex(*discordStatus)
+	controller.discord.UpdateStatusComplex(*discordStatus)
 
 	done := make(chan error)
 
@@ -108,7 +117,7 @@ func (controller *Controller) end() error {
 	controller.updateControllerMessage()
 
 	if len(controller.musicQueue) == 0 {
-		controller.server.Discord.UpdateStatusComplex(*controller.server.Status)
+		controller.discord.UpdateStatusComplex(*controller.previousStatus)
 
 		if controller.voiceConnection != nil {
 			err := controller.voiceConnection.Disconnect()
@@ -169,11 +178,14 @@ func (controller *Controller) AddToQueue(context *Context) error {
 	}
 
 	if controller.voiceConnection == nil {
-		var err error
+		guild, err := controller.discord.Guild(controller.channel.GuildID)
+		if err != nil {
+			return err
+		}
 
-		for _, vs := range controller.server.Guild.VoiceStates {
+		for _, vs := range guild.VoiceStates {
 			if vs.UserID == context.Message.Author.ID {
-				controller.voiceConnection, err = controller.server.Discord.ChannelVoiceJoin(
+				controller.voiceConnection, err = controller.discord.ChannelVoiceJoin(
 					vs.GuildID, vs.ChannelID, false, true)
 				if err != nil {
 					return err
@@ -215,9 +227,9 @@ func (controller *Controller) PauseResume() {
 	}
 }
 
-func (controller *Controller) NewControllerMessage() error {
+func (controller *Controller) NewControllerMessage(reactionListener *ReactionListener) error {
 	for {
-		messages, err := controller.server.Discord.ChannelMessages(controller.server.Channels.Music.ID, 100, "", "", "")
+		messages, err := controller.discord.ChannelMessages(controller.channel.ID, 100, "", "", "")
 		if err != nil {
 			return err
 		}
@@ -227,7 +239,7 @@ func (controller *Controller) NewControllerMessage() error {
 			messagesID = append(messagesID, message.ID)
 		}
 
-		err = controller.server.Discord.ChannelMessagesBulkDelete(controller.server.Channels.Music.ID, messagesID)
+		err = controller.discord.ChannelMessagesBulkDelete(controller.channel.ID, messagesID)
 		if err != nil {
 			return err
 		}
@@ -248,8 +260,8 @@ func (controller *Controller) NewControllerMessage() error {
 		embed = controller.newControllerEmbed()
 	}
 
-	reactionator := NewReactionator(controller.server.Channels.Music.ID,
-		controller.server.Discord, controller.server.ReactionListener, false, true, ReactionatorTypeController, nil)
+	reactionator := NewReactionator(controller.channel.ID,
+		controller.discord, reactionListener, false, true, ReactionatorTypeController, nil)
 
 	reactionator.AddDefaultPage("", embed)
 
@@ -305,7 +317,7 @@ func (controller *Controller) updateControllerMessage() error {
 			MessageEmbed
 	}
 
-	_, err := controller.server.Discord.ChannelMessageEditEmbed(controller.server.Channels.Music.ID,
+	_, err := controller.discord.ChannelMessageEditEmbed(controller.channel.ID,
 		controller.Message.ID, embed)
 	if err != nil {
 		return err

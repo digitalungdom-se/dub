@@ -41,8 +41,8 @@ type (
 	}
 )
 
-func NewReactionListener(discord *discordgo.Session) *ReactionListener {
-	reactionListener := new(ReactionListener)
+func NewReactionListener(discord *discordgo.Session) ReactionListener {
+	var reactionListener ReactionListener
 	reactionListener.discord = discord
 	reactionListener.Messages = make(map[string]*reactionator)
 	reactionListener.Users = make(map[string]*activeReactionators)
@@ -174,8 +174,6 @@ func (reactionator *reactionator) Initiate() error {
 	if err != nil {
 		return err
 	}
-
-	time.Sleep(1 * time.Second)
 
 	for _, value := range reactionator.reactionOrder {
 		err = reactionator.discord.MessageReactionAdd(reactionator.channelID, msg.ID, value)

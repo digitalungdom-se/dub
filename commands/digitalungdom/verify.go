@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var Verify = pkg.Command{
+var Verify = internal.Command{
 	Name:        "verify",
 	Description: "Koppla ditt discord konto till ditt Digital Ungdom konto",
 	Aliases:     []string{"verifiera"},
@@ -18,7 +18,7 @@ var Verify = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		msg, err := ctx.Reply("**BEARBETAR...**")
 		if err != nil {
 			return err
@@ -31,10 +31,10 @@ var Verify = pkg.Command{
 			}
 		}
 
-		for _, role := range ctx.Server.Guild.Roles {
+		for _, role := range server.Guild.Roles {
 			if role.Name == "verified" {
 				verifiedID := role.ID
-				for _, member := range ctx.Server.Guild.Members {
+				for _, member := range server.Guild.Members {
 					if member.User.ID == ctx.Message.Author.ID {
 						if pkg.StringInSlice(verifiedID, member.Roles) {
 							_, err = ctx.Discord.ChannelMessageEdit(msg.ChannelID, msg.ID, "Du är redan verifierad.")
@@ -60,27 +60,27 @@ var Verify = pkg.Command{
 		}
 
 		if len(ctx.Args[0]) == 16 {
-			email, err := ctx.Server.Database.ConnectDUAccount(ctx.Args[0], ctx.Message.Author.ID)
+			email, err := server.Database.ConnectDUAccount(ctx.Args[0], ctx.Message.Author.ID)
 			if err != nil || email == "" {
 				_, err = ctx.Discord.ChannelMessageEdit(msg.ChannelID, msg.ID, "Inget konto kunde hittas")
 
 				return err
 			}
 
-			err = ctx.Server.Mailer.SendVerifyDiscordConfirmation(email, ctx.Message.Author.Username)
+			err = server.Mailer.SendVerifyDiscordConfirmation(email, ctx.Message.Author.Username)
 			if err != nil {
 				return err
 			}
 
 			var verifiedID string
 
-			for _, role := range ctx.Server.Guild.Roles {
+			for _, role := range server.Guild.Roles {
 				if role.Name == "verified" {
 					verifiedID = role.ID
 				}
 			}
 
-			err = ctx.Discord.GuildMemberRoleAdd(ctx.Server.Guild.ID, ctx.Message.Author.ID, verifiedID)
+			err = ctx.Discord.GuildMemberRoleAdd(server.Guild.ID, ctx.Message.Author.ID, verifiedID)
 			if err != nil {
 				return err
 			}
@@ -93,7 +93,7 @@ var Verify = pkg.Command{
 		var user internal.User
 
 		if govalidator.IsEmail(ctx.Args[0]) {
-			user, err = ctx.Server.Database.GetUserByEmail(ctx.Args[0])
+			user, err = server.Database.GetUserByEmail(ctx.Args[0])
 
 			if err != nil {
 				_, err = ctx.Discord.ChannelMessageEdit(msg.ChannelID, msg.ID, "Inget konto kunde hittas")
@@ -106,7 +106,7 @@ var Verify = pkg.Command{
 			}
 
 		} else {
-			user, err = ctx.Server.Database.GetUserByUsername(ctx.Args[0])
+			user, err = server.Database.GetUserByUsername(ctx.Args[0])
 			if err != nil {
 				_, err = ctx.Discord.ChannelMessageEdit(msg.ChannelID, msg.ID, "Inget konto kunde hittas")
 				return err
@@ -118,12 +118,12 @@ var Verify = pkg.Command{
 			}
 		}
 
-		token, err := ctx.Server.Database.AddDiscordVerificationToken(user.ID.Hex())
+		token, err := server.Database.AddDiscordVerificationToken(user.ID.Hex())
 		if err != nil {
 			return err
 		}
 
-		err = ctx.Server.Mailer.SendVerifyDiscord(user.Details.Email, token)
+		err = server.Mailer.SendVerifyDiscord(user.Details.Email, token)
 		if err != nil {
 			return err
 		}

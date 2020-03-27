@@ -40,8 +40,8 @@ type User struct {
 	}
 }
 
-func NewDatabase(mongoDatabase *mongo.Database) *Database {
-	database := new(Database)
+func NewDatabase(mongoDatabase *mongo.Database) Database {
+	var database Database
 
 	database.db = mongoDatabase
 

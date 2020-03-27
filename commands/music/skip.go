@@ -1,10 +1,11 @@
 package music
 
 import (
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Skip = pkg.Command{
+var Skip = internal.Command{
 	Name:        "skip",
 	Description: "Skippar den nuvarande låten",
 	Aliases:     []string{"skippa", "byt", "sk"},
@@ -14,9 +15,9 @@ var Skip = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		ctx.Delete()
-		ctx.Server.Controller.Skip()
+		server.Controller.Skip()
 
 		return nil
 	},

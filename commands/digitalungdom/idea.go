@@ -3,11 +3,12 @@ package digitalungdom
 import (
 	"strings"
 
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var Idea = pkg.Command{
+var Idea = internal.Command{
 	Name:        "idea",
 	Description: "Föreslå något till Digital Ungdom",
 	Aliases:     []string{"förslag"},
@@ -17,7 +18,7 @@ var Idea = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		if len(ctx.Args) < 3 {
 			_, err := ctx.Reply("Du måste ge ett förslag på minst tre ord.")
 			return err
@@ -29,7 +30,7 @@ var Idea = pkg.Command{
 			"message": strings.Join(ctx.Args, " "),
 			"author":  ctx.Message.Author.ID}
 
-		err := ctx.Server.Database.InsertNotification(idea)
+		err := server.Database.InsertNotification(idea)
 		if err != nil {
 			return err
 		}

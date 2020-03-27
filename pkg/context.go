@@ -9,18 +9,16 @@ import (
 
 type Context struct {
 	Discord     *discordgo.Session
-	Server      *Server
 	TextChannel *discordgo.Channel
 	Message     *discordgo.MessageCreate
 	Args        []string
 }
 
-func NewContext(discord *discordgo.Session, server *Server, textChannel *discordgo.Channel,
+func NewContext(discord *discordgo.Session, textChannel *discordgo.Channel,
 	message *discordgo.MessageCreate, args []string) *Context {
 	context := new(Context)
 
 	context.Discord = discord
-	context.Server = server
 	context.TextChannel = textChannel
 	context.Message = message
 	context.Args = args
@@ -93,9 +91,9 @@ func (context *Context) ReplyComplex(message *discordgo.MessageSend) (*discordgo
 }
 
 func (context *Context) IsDM() bool {
-	channel, err := context.Server.Discord.State.Channel(context.Message.ChannelID)
+	channel, err := context.Discord.State.Channel(context.Message.ChannelID)
 	if err != nil {
-		if channel, err = context.Server.Discord.Channel(context.Message.ChannelID); err != nil {
+		if channel, err = context.Discord.Channel(context.Message.ChannelID); err != nil {
 			return false
 		}
 	}

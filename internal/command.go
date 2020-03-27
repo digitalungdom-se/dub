@@ -1,4 +1,6 @@
-package pkg
+package internal
+
+import "github.com/digitalungdom-se/dub/pkg"
 
 type (
 	Command struct {
@@ -10,7 +12,7 @@ type (
 		Example     string
 		ServerOnly  bool
 		AdminOnly   bool
-		Execute     func(*Context) error
+		Execute     func(*pkg.Context, *Server) error
 	}
 
 	Commands map[string]Command
@@ -20,8 +22,11 @@ type (
 	}
 )
 
-func NewCommandHandler() *CommandHandler {
-	return &CommandHandler{commands: make(Commands)}
+func NewCommandHandler() CommandHandler {
+	var commandHandler CommandHandler
+	commandHandler.commands = make(Commands)
+
+	return commandHandler
 }
 
 func (handler *CommandHandler) GetCommands(group string) Commands {
@@ -49,7 +54,7 @@ func (handler *CommandHandler) GetCommand(name string) (Command, bool) {
 	commands := handler.GetCommands("")
 
 	for _, command := range commands {
-		if StringInSlice(name, command.Aliases) {
+		if pkg.StringInSlice(name, command.Aliases) {
 			return command, true
 		}
 	}

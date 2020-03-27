@@ -1,10 +1,11 @@
 package music
 
 import (
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Controller = pkg.Command{
+var Controller = internal.Command{
 	Name:        "controller",
 	Description: "Skickar en ny controller i musik kanalen",
 	Aliases:     []string{"kontroll"},
@@ -14,9 +15,9 @@ var Controller = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		ctx.Delete()
-		err := ctx.Server.Controller.NewControllerMessage()
+		err := server.Controller.NewControllerMessage(&server.ReactionListener)
 
 		return err
 	},

@@ -5,10 +5,11 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var DubStatus = pkg.Command{
+var DubStatus = internal.Command{
 	Name:        "dubstatus",
 	Description: "Ändrar statusen av boten",
 	Aliases:     []string{},
@@ -18,10 +19,10 @@ var DubStatus = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   true,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		status := strings.ToUpper(ctx.Args[0])
 		statusText := strings.Join(ctx.Args[1:], " ")
-		discordStatus := new(discordgo.UpdateStatusData)
+		discordStatus := discordgo.UpdateStatusData{}
 		discordStatus.Game = new(discordgo.Game)
 
 		switch status {
@@ -44,12 +45,12 @@ var DubStatus = pkg.Command{
 		discordStatus.Status = statusText
 		discordStatus.Game.Name = statusText
 
-		err := ctx.Discord.UpdateStatusComplex(*discordStatus)
+		err := ctx.Discord.UpdateStatusComplex(discordStatus)
 		if err != nil {
 			return err
 		}
 
-		ctx.Server.Status = discordStatus
+		server.Status = discordStatus
 
 		ctx.Reply(fmt.Sprintf("Sätter statusen till `%v %v`", status, statusText))
 

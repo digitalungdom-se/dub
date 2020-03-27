@@ -1,10 +1,11 @@
 package misc
 
 import (
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Info = pkg.Command{
+var Info = internal.Command{
 	Name:        "info",
 	Description: "Få information om boten",
 	Aliases:     []string{},
@@ -14,7 +15,7 @@ var Info = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		embed := pkg.NewEmbed().
 			SetTitle("__**INFORMATION OM BOTEN**__").
 			AddField("VERSION", "1.0").

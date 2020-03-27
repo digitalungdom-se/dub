@@ -15,8 +15,8 @@ type Mailer struct {
 	emailCollection *mongo.Collection
 }
 
-func NewMailer(collection *mongo.Collection) *Mailer {
-	mailer := new(Mailer)
+func NewMailer(collection *mongo.Collection) Mailer {
+	var mailer Mailer
 
 	mailer.dialer = gomail.NewDialer("smtp.gmail.com", 587, os.Getenv("NOREPLY_EMAIL"), os.Getenv("NOREPLY_PASSWORD"))
 	mailer.emailCollection = collection

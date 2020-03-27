@@ -1,10 +1,11 @@
 package music
 
 import (
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var PauseResume = pkg.Command{
+var PauseResume = internal.Command{
 	Name:        "pr",
 	Description: "Pausar eller återupptar musiken",
 	Aliases:     []string{"pause", "resume", "pausa", "fortsätt"},
@@ -14,9 +15,9 @@ var PauseResume = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		ctx.Delete()
-		ctx.Server.Controller.PauseResume()
+		server.Controller.PauseResume()
 
 		return nil
 	},

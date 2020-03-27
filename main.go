@@ -1,12 +1,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/digitalungdom-se/dub/commands/admin"
@@ -15,10 +15,7 @@ import (
 	"github.com/digitalungdom-se/dub/commands/music"
 	"github.com/digitalungdom-se/dub/events"
 	"github.com/digitalungdom-se/dub/internal"
-	"github.com/digitalungdom-se/dub/pkg"
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
@@ -34,53 +31,40 @@ func main() {
 		log.Fatal("Error creating Discord session,", err)
 	}
 
-	config := pkg.LoadConfig()
+	config := internal.LoadConfig()
 
-	commandHandler := pkg.NewCommandHandler()
-	registerCommands(commandHandler)
-
-	var mongoClient *mongo.Client
-	mongoClient, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("DB_URI")))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = mongoClient.Ping(context.TODO(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	mongoDatabase := mongoClient.Database(os.Getenv("DB_DATABASE"))
-	database := internal.NewDatabase(mongoDatabase)
-
-	reactionListener := pkg.NewReactionListener(discord)
-	mailer := internal.NewMailer(mongoDatabase.Collection("emails"))
-
-	server := pkg.NewServer(config, discord, reactionListener, database, mailer, commandHandler)
+	server := internal.NewServer(config, discord)
 	if err != nil {
 		log.Fatal("Error creating server,", err)
 	}
+
+	registerCommands(&server.CommandHandler)
 
 	discord.AddHandler(events.GuildMemberAddHandler(server))
 	discord.AddHandler(events.MessageHandler(server))
 	discord.AddHandler(events.AddReactionHandler(server))
 	discord.AddHandler(events.RemoveReactionHandler(server))
-	discord.AddHandler(events.StartHandler(server))
+	discord.AddHandlerOnce(events.StartHandler(server))
 
 	err = discord.Open()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Bot is now running. Press CTRL-C to exit.")
+	fmt.Printf("%v | STARTED ANNA IN DISCORD\n", time.Now().Format("2006-01-02 15:04:05"))
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM)
 	<-sc
 
-	discord.Close()
+	err = discord.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	os.Exit(0)
 }
 
-func registerCommands(commandHandler *pkg.CommandHandler) {
+func registerCommands(commandHandler *internal.CommandHandler) {
 	commandHandler.Register(admin.DubStatus)
 	commandHandler.Register(admin.Join)
 

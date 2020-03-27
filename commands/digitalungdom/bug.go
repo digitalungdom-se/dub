@@ -3,11 +3,12 @@ package digitalungdom
 import (
 	"strings"
 
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var Bug = pkg.Command{
+var Bug = internal.Command{
 	Name:        "bug",
 	Description: "Anmäl ett bugg",
 	Aliases:     []string{"bugg"},
@@ -17,7 +18,7 @@ var Bug = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		if len(ctx.Args) < 3 {
 			_, err := ctx.Reply("Du måste ge en anledning på minst tre ord.")
 			return err
@@ -29,7 +30,7 @@ var Bug = pkg.Command{
 			"message": strings.Join(ctx.Args, " "),
 			"author":  ctx.Message.Author.ID}
 
-		err := ctx.Server.Database.InsertNotification(bug)
+		err := server.Database.InsertNotification(bug)
 		if err != nil {
 			return err
 		}

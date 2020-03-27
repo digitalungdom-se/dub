@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
@@ -20,7 +21,7 @@ var groupReactions = map[string]string{
 
 var groupReactionOrder = []string{"digitalungdom", "music", "misc"}
 
-var Help = pkg.Command{
+var Help = internal.Command{
 	Name:        "help",
 	Description: "Listar alla tillgängliga kommandon",
 	Aliases:     []string{"commands", "command", "hjälp", "kommando", "kommandon"},
@@ -30,9 +31,9 @@ var Help = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		if len(ctx.Args) != 0 {
-			command, found := ctx.Server.CommandHandler.GetCommand(ctx.Args[0])
+			command, found := server.CommandHandler.GetCommand(ctx.Args[0])
 
 			if !found {
 				_, err := ctx.Discord.ChannelMessageSend(ctx.Message.ChannelID,
@@ -67,8 +68,8 @@ var Help = pkg.Command{
 			}
 		}
 
-		commands := ctx.Server.CommandHandler.GetCommands("")
-		groups := make(map[string][]pkg.Command)
+		commands := server.CommandHandler.GetCommands("")
+		groups := make(map[string][]internal.Command)
 
 		for _, command := range commands {
 			groups[command.Group] = append(groups[command.Group], command)
@@ -85,9 +86,9 @@ var Help = pkg.Command{
 
 		admin := false
 
-		for _, member := range ctx.Server.Guild.Members {
+		for _, member := range server.Guild.Members {
 			if member.User.ID == ctx.Message.Author.ID {
-				if pkg.StringInSlice(ctx.Server.Roles.Admin.ID, member.Roles) {
+				if pkg.StringInSlice(server.Roles.Admin.ID, member.Roles) {
 					description += "🚨 **--** Admin kommandon\n"
 					admin = true
 				}
@@ -122,7 +123,7 @@ var Help = pkg.Command{
 			return err
 		}
 
-		reactionator := pkg.NewReactionator(privateDM.ID, ctx.Discord, ctx.Server.ReactionListener,
+		reactionator := pkg.NewReactionator(privateDM.ID, ctx.Discord, &server.ReactionListener,
 			true, true, pkg.ReactionatorTypeHelp, ctx.Message.Author)
 
 		err = reactionator.AddDefaultPage(groupReactions["info"], embeds["info"])
@@ -151,7 +152,7 @@ var Help = pkg.Command{
 
 		reactionator.CloseAfter(3 * time.Minute)
 
-		if activeReactionators, ok := ctx.Server.ReactionListener.Users[ctx.Message.Author.ID]; ok {
+		if activeReactionators, ok := server.ReactionListener.Users[ctx.Message.Author.ID]; ok {
 			if activeReactionators.Help != nil {
 				activeReactionators.Help.Close()
 			}

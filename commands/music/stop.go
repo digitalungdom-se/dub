@@ -1,10 +1,11 @@
 package music
 
 import (
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Stop = pkg.Command{
+var Stop = internal.Command{
 	Name:        "stop",
 	Description: "Stannar botens nuvarande musik",
 	Aliases:     []string{"stanna", "st"},
@@ -14,9 +15,9 @@ var Stop = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		ctx.Delete()
-		ctx.Server.Controller.Stop()
+		server.Controller.Stop()
 
 		return nil
 	},

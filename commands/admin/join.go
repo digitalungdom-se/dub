@@ -3,10 +3,11 @@ package admin
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/digitalungdom-se/dub/events"
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Join = pkg.Command{
+var Join = internal.Command{
 	Name:        "join",
 	Description: "Simulerar en användare joinar",
 	Aliases:     []string{},
@@ -16,10 +17,10 @@ var Join = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   true,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		var member *discordgo.Member
 
-		for _, guildMember := range ctx.Server.Guild.Members {
+		for _, guildMember := range server.Guild.Members {
 			if guildMember.User.ID == ctx.Message.Mentions[0].ID {
 				member = guildMember
 			}
@@ -27,7 +28,7 @@ var Join = pkg.Command{
 
 		guildMemberAdd := &discordgo.GuildMemberAdd{Member: member}
 
-		events.GuildMemberAddHandler(ctx.Server)(ctx.Discord, guildMemberAdd)
+		events.GuildMemberAddHandler(server)(ctx.Discord, guildMemberAdd)
 		return nil
 	},
 }

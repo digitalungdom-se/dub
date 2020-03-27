@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.MessageCreate) {
+func MessageHandler(server *internal.Server) func(*discordgo.Session, *discordgo.MessageCreate) {
 	return func(discord *discordgo.Session, message *discordgo.MessageCreate) {
 		if !server.Ready {
 			return
@@ -19,6 +20,7 @@ func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.Mess
 		channel, err := discord.State.Channel(message.ChannelID)
 		if err != nil {
 			log.Println("Error getting channel,", err)
+
 			return
 		}
 
@@ -28,6 +30,7 @@ func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.Mess
 					err := discord.ChannelMessageDelete(message.ChannelID, message.ID)
 					if err != nil {
 						log.Print("Error deleting message", err)
+
 						return
 					}
 				}
@@ -50,15 +53,27 @@ func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.Mess
 		command, found := server.CommandHandler.GetCommand(commandName)
 
 		if !found {
-			discord.ChannelMessageSend(message.ChannelID,
-				"Kunde inte hitta kommandot. Testa `$help` för att se alla kommandon.")
+			replyMessage := "Kunde inte hitta kommandot. Testa `$help` för att se alla kommandon."
+
+			if channel.Type == discordgo.ChannelTypeGuildText {
+				replyMessage = message.Author.Mention() + ", " + strings.ToLower(string(replyMessage[0])) + replyMessage[1:]
+			}
+
+			discord.ChannelMessageSend(message.ChannelID, replyMessage)
+
 			return
 		}
 
 		if command.ServerOnly {
 			if channel.Type != discordgo.ChannelTypeGuildText {
-				discord.ChannelMessageSend(message.ChannelID,
-					"Kommandot är bara tillgängligt i servern, var snäll och använd den där.")
+				replyMessage := "Kommandot är bara tillgängligt i servern, var snäll och använd den där."
+
+				if channel.Type == discordgo.ChannelTypeGuildText {
+					replyMessage = message.Author.Mention() + ", " + strings.ToLower(string(replyMessage[0])) + replyMessage[1:]
+				}
+
+				discord.ChannelMessageSend(message.ChannelID, replyMessage)
+
 				return
 			}
 		}
@@ -67,8 +82,14 @@ func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.Mess
 			for _, member := range server.Guild.Members {
 				if member.User.ID == message.Author.ID {
 					if !pkg.StringInSlice(server.Roles.Admin.ID, member.Roles) {
-						discord.ChannelMessageSend(message.ChannelID,
-							"Detta kommando är bara tillgänglig för admins.")
+						replyMessage := "Detta kommando är bara tillgänglig för admins."
+
+						if channel.Type == discordgo.ChannelTypeGuildText {
+							replyMessage = message.Author.Mention() + ", " + strings.ToLower(string(replyMessage[0])) + replyMessage[1:]
+						}
+
+						discord.ChannelMessageSend(message.ChannelID, replyMessage)
+
 						return
 					}
 				}
@@ -90,23 +111,33 @@ func MessageHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.Mess
 			}
 
 			if userVS == nil {
-				discord.ChannelMessageSend(message.ChannelID,
-					"Du måste vara i en ljudkanal för att styra boten.")
+				replyMessage := "Du måste vara i en ljudkanal för att styra boten."
+
+				if channel.Type == discordgo.ChannelTypeGuildText {
+					replyMessage = message.Author.Mention() + ", " + strings.ToLower(string(replyMessage[0])) + replyMessage[1:]
+				}
+
+				discord.ChannelMessageSend(message.ChannelID, replyMessage)
 
 				return
 			}
 
 			if botVS != nil && botVS.ChannelID != userVS.ChannelID {
-				discord.ChannelMessageSend(message.ChannelID,
-					"Du måste vara i samma ljudkanal som boten för att styra den.")
-				return
+				replyMessage := "Du måste vara i samma ljudkanal som boten för att styra den."
 
+				if channel.Type == discordgo.ChannelTypeGuildText {
+					replyMessage = message.Author.Mention() + ", " + strings.ToLower(string(replyMessage[0])) + replyMessage[1:]
+				}
+
+				discord.ChannelMessageSend(message.ChannelID, replyMessage)
+
+				return
 			}
 		}
 
-		ctx := pkg.NewContext(discord, server, channel, message, args)
+		ctx := pkg.NewContext(discord, channel, message, args)
 
-		err = command.Execute(ctx)
+		err = command.Execute(ctx, server)
 		if err != nil {
 			log.Print(fmt.Sprintf("Error executing: %v ", message.Content), err)
 		}

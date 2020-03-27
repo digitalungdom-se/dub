@@ -6,10 +6,11 @@ import (
 	"log"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-func GuildMemberAddHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.GuildMemberAdd) {
+func GuildMemberAddHandler(server *internal.Server) func(*discordgo.Session, *discordgo.GuildMemberAdd) {
 	return func(discord *discordgo.Session, member *discordgo.GuildMemberAdd) {
 		gifbuff, err := pkg.NameToGif(member.User.Username, member.User.AvatarURL("128"))
 		if err != nil {

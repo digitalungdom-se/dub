@@ -3,11 +3,12 @@ package digitalungdom
 import (
 	"strings"
 
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var Report = pkg.Command{
+var Report = internal.Command{
 	Name:        "report",
 	Description: "Anmäl en användare",
 	Aliases:     []string{"anmäl"},
@@ -17,7 +18,7 @@ var Report = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		if !ctx.IsDM() {
 			err := ctx.Delete()
 			if err != nil {
@@ -42,7 +43,7 @@ var Report = pkg.Command{
 			"author":   ctx.Message.Author.ID,
 			"reported": ctx.Message.Mentions[0].ID}
 
-		err := ctx.Server.Database.InsertNotification(report)
+		err := server.Database.InsertNotification(report)
 		if err != nil {
 			return err
 		}

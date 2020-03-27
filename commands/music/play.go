@@ -1,10 +1,11 @@
 package music
 
 import (
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Play = pkg.Command{
+var Play = internal.Command{
 	Name:        "play",
 	Description: "Spelar en låt",
 	Aliases:     []string{"spela", "pl"},
@@ -14,7 +15,7 @@ var Play = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		ctx.Delete()
 
 		if len(ctx.Args) == 0 {
@@ -22,7 +23,7 @@ var Play = pkg.Command{
 			return nil
 		}
 
-		err := ctx.Server.Controller.AddToQueue(ctx)
+		err := server.Controller.AddToQueue(ctx)
 
 		return err
 	},

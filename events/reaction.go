@@ -4,26 +4,25 @@ import (
 	"log"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/digitalungdom-se/dub/pkg"
+	"github.com/digitalungdom-se/dub/internal"
 )
 
-func AddReactionHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.MessageReactionAdd) {
+func AddReactionHandler(server *internal.Server) func(*discordgo.Session, *discordgo.MessageReactionAdd) {
 	return func(discord *discordgo.Session, message *discordgo.MessageReactionAdd) {
-		if message.ChannelID == server.Channels.Regler.ID {
-			if server.ReactionListener.Messages[message.MessageID] == nil {
-				discord.MessageReactionsRemoveAll(message.ChannelID, message.MessageID)
-			}
-		}
-
 		user, err := discord.User(message.UserID)
 		if err != nil {
 			log.Println("Error getting user,", err)
 			return
 		}
 
-		isBot := user.Bot
-		if isBot {
+		if user.Bot {
 			return
+		}
+
+		if message.ChannelID == server.Channels.Regler.ID {
+			if server.ReactionListener.Messages[message.MessageID] == nil {
+				discord.MessageReactionsRemoveAll(message.ChannelID, message.MessageID)
+			}
 		}
 
 		if server.ReactionListener.Messages[message.MessageID] == nil {
@@ -39,7 +38,7 @@ func AddReactionHandler(server *pkg.Server) func(*discordgo.Session, *discordgo.
 	}
 }
 
-func RemoveReactionHandler(server *pkg.Server) func(discord *discordgo.Session, message *discordgo.MessageReactionRemove) {
+func RemoveReactionHandler(server *internal.Server) func(discord *discordgo.Session, message *discordgo.MessageReactionRemove) {
 	return func(discord *discordgo.Session, message *discordgo.MessageReactionRemove) {
 		user, err := discord.User(message.UserID)
 		if err != nil {

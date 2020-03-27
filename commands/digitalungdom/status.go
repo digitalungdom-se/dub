@@ -3,12 +3,13 @@ package digitalungdom
 import (
 	"fmt"
 
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var Status = pkg.Command{
+var Status = internal.Command{
 	Name:        "status",
 	Description: "Kolla till statusen för Digital Ungdom",
 	Aliases:     []string{},
@@ -18,7 +19,7 @@ var Status = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server * internal.Server) error {
 		kelvin, _ := primitive.ObjectIDFromHex("5c62e491a754cd4c7c9c7fa7")
 		douglas, _ := primitive.ObjectIDFromHex("5c6b29066157e7938c63aec9")
 		simon, _ := primitive.ObjectIDFromHex("5c6bbae9f302e343d917a510")
@@ -31,7 +32,7 @@ var Status = pkg.Command{
 			charles,
 		}}}
 
-		board, err := ctx.Server.Database.GetUsersByID(filter)
+		board, err := server.Database.GetUsersByID(filter)
 		if err != nil {
 			return err
 		}
@@ -53,12 +54,12 @@ var Status = pkg.Command{
 		serverStatus += "**dub**: online"
 
 		var memberStatus string
-		digitalungdomCount, err := ctx.Server.Database.GetMemberCount()
+		digitalungdomCount, err := server.Database.GetMemberCount()
 		if err != nil {
 			return err
 		}
 
-		discordCount := ctx.Server.Guild.MemberCount
+		discordCount := server.Guild.MemberCount
 
 		memberStatus = fmt.Sprintf("**digitalungdom.se**: %v st\n", digitalungdomCount)
 		memberStatus += fmt.Sprintf("**discord**: %v st", discordCount)

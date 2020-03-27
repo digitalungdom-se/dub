@@ -1,10 +1,11 @@
 package misc
 
 import (
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Slap = pkg.Command{
+var Slap = internal.Command{
 	Name:        "slap",
 	Description: "Smiska någon som har varit stygg",
 	Aliases:     []string{"smisk"},
@@ -14,7 +15,7 @@ var Slap = pkg.Command{
 	ServerOnly:  true,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		mentions := ctx.Message.Mentions
 		if len(mentions) == 0 {
 			return nil

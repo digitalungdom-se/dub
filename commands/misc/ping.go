@@ -5,10 +5,11 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/digitalungdom-se/dub/internal"
 	"github.com/digitalungdom-se/dub/pkg"
 )
 
-var Ping = pkg.Command{
+var Ping = internal.Command{
 	Name:        "ping",
 	Description: "ping, pong!",
 	Aliases:     []string{},
@@ -18,7 +19,7 @@ var Ping = pkg.Command{
 	ServerOnly:  false,
 	AdminOnly:   false,
 
-	Execute: func(ctx *pkg.Context) error {
+	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		messageTime, err := discordgo.SnowflakeTimestamp(ctx.Message.ID)
 		if err != nil {
 			return err
