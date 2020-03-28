@@ -20,7 +20,6 @@ type (
 	Controller struct {
 		channel        *discordgo.Channel
 		discord        *discordgo.Session
-		guild          *discordgo.Guild
 		previousStatus *discordgo.UpdateStatusData
 
 		embed           *discordgo.MessageEmbed
@@ -53,10 +52,10 @@ type (
 	}
 )
 
-func NewController(discord *discordgo.Session, channel *discordgo.Channel, previousStatus *discordgo.UpdateStatusData, reactionListener *ReactionListener) (Controller, error) {
+func NewController(discord *discordgo.Session, channel *discordgo.Channel, previousStatus *discordgo.UpdateStatusData, reactionListener *ReactionListener) (*Controller, error) {
 	var err error
-	var controller Controller
-
+	controller := new(Controller)
+	
 	controller.discord = discord
 	controller.channel = channel
 	controller.previousStatus = previousStatus

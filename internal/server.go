@@ -18,7 +18,7 @@ type (
 		Channels         channels
 		CommandHandler   CommandHandler
 		Config           Config
-		Controller       pkg.Controller
+		Controller       *pkg.Controller
 		Database         Database
 		Discord          *discordgo.Session
 		Guild            *discordgo.Guild
@@ -37,7 +37,8 @@ type (
 	}
 
 	roles struct {
-		Admin *discordgo.Role
+		Admin    *discordgo.Role
+		Verified *discordgo.Role
 	}
 )
 
@@ -117,15 +118,17 @@ func (server *Server) Init() error {
 	}
 
 	for _, role := range server.Guild.Roles {
-		if role.Name == "admin" {
-			server.Discord.State.RoleAdd(server.Config.GuildID, role)
-			server.Roles.Admin, err = server.Discord.State.Role(server.Config.GuildID, role.ID)
+		switch role.Name {
+		case "admin":
+			server.Discord.State.RoleAdd(server.Guild.ID, role)
+			server.Roles.Admin, err = server.Discord.State.Role(server.Guild.ID, role.ID)
+		case "verified":
+			server.Discord.State.RoleAdd(server.Guild.ID, role)
+			server.Roles.Verified, err = server.Discord.State.Role(server.Guild.ID, role.ID)
+		}
 
-			if err != nil {
-				return err
-			}
-
-			break
+		if err != nil {
+			return err
 		}
 	}
 
@@ -133,7 +136,8 @@ func (server *Server) Init() error {
 		server.Channels.Music == nil ||
 		server.Channels.Bot == nil ||
 		server.Channels.Regler == nil ||
-		server.Roles.Admin == nil {
+		server.Roles.Admin == nil ||
+		server.Roles.Verified == nil {
 		return errors.New("could not find channels or roles")
 	}
 
