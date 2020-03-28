@@ -42,12 +42,32 @@ func MessageHandler(server *internal.Server) func(*discordgo.Session, *discordgo
 			return
 		}
 
-		if len([]rune(message.Content)) == 0 || !pkg.StringInSlice(string([]rune(message.Content)[0]), server.Config.Prefix) {
+		mentionsMe := false
+
+		for _, mention := range message.Mentions {
+			if mention.ID == server.Bot.User.ID {
+				mentionsMe = true
+				message.Content = strings.Replace(message.Content, server.Bot.Mention(), "", -1)
+			}
+		}
+
+		if !mentionsMe && (len([]rune(message.Content)) == 0 || !pkg.StringInSlice(string([]rune(message.Content)[0]), server.Config.Prefix)) {
 			return
 		}
 
 		args := strings.Fields(message.Content)
-		commandName := strings.ToLower(args[0][1:])
+
+		if len(args) == 0 {
+			return
+		}
+
+		var commandName string
+		if mentionsMe {
+			commandName = strings.ToLower(args[0])
+		} else {
+			commandName = strings.ToLower(args[0][1:])
+		}
+
 		args = args[1:]
 
 		command, found := server.CommandHandler.GetCommand(commandName)

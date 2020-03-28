@@ -25,29 +25,57 @@ var SendDM = internal.Command{
 			ctx.Reply("Du måste ange groupID|userID|\"EVERYONE\" och ett meddelande.")
 			return nil
 		}
-		messageTemplate := strings.Join(ctx.Args[1:], " ")
-		var membersToSend []*discordgo.Member
 
 		if strings.ToUpper(ctx.Args[0]) != "EVERYONE" && !pkg.IsSnowflake(ctx.Args[0]) && !pkg.IsSnowflake(string(ctx.Args[0][1:])) {
 			ctx.Reply("Första argumentet måste vara en snowflake eller EVERYONE.")
 			return nil
 		}
 
+		messageTemplate := strings.Join(ctx.Args[1:], " ")
+
+		var membersToSend []*discordgo.Member
+
 		if strings.ToUpper(ctx.Args[0]) == "EVERYONE" {
 			membersToSend = server.Guild.Members
-		}
+		} else {
+			snowflake := ctx.Args[0]
+			isOpposite := false
+			isRole := false
 
-		if pkg.IsSnowflake(ctx.Args[0]) || pkg.IsSnowflake(string(ctx.Args[0][1:])) {
-			if string(ctx.Args[0][0]) == "!" {
+			if string(snowflake[0]) == "!" {
+				snowflake = string(snowflake[1:])
+				isOpposite = true
+			}
+
+			for _, role := range server.Guild.Roles {
+				if role.ID == snowflake {
+					isRole = true
+				}
+			}
+
+			if isOpposite {
+				if !isRole {
+					ctx.Reply("Ingen roll med det IDt finns.")
+					return nil
+				}
+
 				for _, member := range server.Guild.Members {
-					if !pkg.StringInSlice(string(ctx.Args[0][1:]), member.Roles) {
+					if !pkg.StringInSlice(snowflake, member.Roles) {
 						membersToSend = append(membersToSend, member)
 					}
 				}
 			} else {
-				for _, member := range server.Guild.Members {
-					if member.User.ID == ctx.Args[0] || pkg.StringInSlice(ctx.Args[0], member.Roles) {
-						membersToSend = append(membersToSend, member)
+				if isRole {
+					for _, member := range server.Guild.Members {
+						if pkg.StringInSlice(snowflake, member.Roles) {
+							membersToSend = append(membersToSend, member)
+						}
+					}
+				} else {
+					for _, member := range server.Guild.Members {
+						if member.User.ID == snowflake {
+							membersToSend = append(membersToSend, member)
+						}
 					}
 				}
 			}
@@ -57,7 +85,7 @@ var SendDM = internal.Command{
 			if member.User.Bot {
 				continue
 			}
-			
+
 			message, err := mustache.Render(messageTemplate, map[string]string{"nick": member.Nick, "username": member.User.Username, "mention": member.Mention()})
 			if err != nil {
 				ctx.Reply(fmt.Sprintf("Error med att kompilera meddelandet till %v.", member.Nick))
