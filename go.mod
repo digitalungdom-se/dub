@@ -6,6 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/bwmarrin/discordgo v0.20.2
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cbroglie/mustache v1.0.1
 	github.com/dchest/uniuri v0.0.0-20200228104902-7aecb25e1fe5
 	github.com/gorilla/websocket v1.4.2 // indirect

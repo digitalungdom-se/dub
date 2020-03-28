@@ -67,6 +67,8 @@ func main() {
 func registerCommands(commandHandler *internal.CommandHandler) {
 	commandHandler.Register(admin.DubStatus)
 	commandHandler.Register(admin.Join)
+	commandHandler.Register(admin.SendGuild)
+	commandHandler.Register(admin.SendDM)
 
 	commandHandler.Register(digitalungdom.Bug)
 	commandHandler.Register(digitalungdom.Idea)
