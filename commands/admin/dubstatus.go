@@ -20,6 +20,11 @@ var DubStatus = internal.Command{
 	AdminOnly:   true,
 
 	Execute: func(ctx *pkg.Context, server *internal.Server) error {
+		if len(ctx.Args) == 0 {
+			ctx.Reply("Du måste ange en status.")
+			return nil
+		}
+
 		status := strings.ToUpper(ctx.Args[0])
 		statusText := strings.Join(ctx.Args[1:], " ")
 		discordStatus := discordgo.UpdateStatusData{}
