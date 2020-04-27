@@ -186,13 +186,9 @@ func (server *Server) InitRules() error {
 	for {
 		messages, _ := server.Discord.ChannelMessages(server.Channels.Regler.ID, 100, "", "", "")
 
-		var messagesID []string
-
 		for _, message := range messages {
-			messagesID = append(messagesID, message.ID)
+			server.Discord.ChannelMessageDelete(server.Channels.Regler.ID, message.ID)
 		}
-
-		server.Discord.ChannelMessagesBulkDelete(server.Channels.Regler.ID, messagesID)
 
 		if len(messages) <= 100 {
 			break

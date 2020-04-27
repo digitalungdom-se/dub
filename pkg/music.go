@@ -230,13 +230,9 @@ func (controller *Controller) NewControllerMessage(reactionListener *ReactionLis
 	for {
 		messages, _ := controller.discord.ChannelMessages(controller.channel.ID, 100, "", "", "")
 
-		var messagesID []string
-
 		for _, message := range messages {
-			messagesID = append(messagesID, message.ID)
+			controller.discord.ChannelMessageDelete(controller.channel.ID, message.ID)
 		}
-
-		controller.discord.ChannelMessagesBulkDelete(controller.channel.ID, messagesID)
 
 		if len(messages) <= 100 {
 			break
