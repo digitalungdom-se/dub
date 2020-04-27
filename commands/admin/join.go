@@ -20,6 +20,11 @@ var Join = internal.Command{
 	Execute: func(ctx *pkg.Context, server *internal.Server) error {
 		var member *discordgo.Member
 
+		if len(ctx.Message.Mentions) == 0 {
+			ctx.Reply("Du måste ange en användare som ska joina.")
+			return nil
+		}
+
 		for _, guildMember := range server.Guild.Members {
 			if guildMember.User.ID == ctx.Message.Mentions[0].ID {
 				member = guildMember
@@ -29,6 +34,7 @@ var Join = internal.Command{
 		guildMemberAdd := &discordgo.GuildMemberAdd{Member: member}
 
 		events.GuildMemberAddHandler(server)(ctx.Discord, guildMemberAdd)
+
 		return nil
 	},
 }

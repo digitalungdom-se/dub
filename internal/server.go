@@ -37,8 +37,9 @@ type (
 	}
 
 	roles struct {
-		Admin    *discordgo.Role
-		Verified *discordgo.Role
+		Admin         *discordgo.Role
+		Verified      *discordgo.Role
+		AcceptedRules *discordgo.Role
 	}
 )
 
@@ -125,6 +126,9 @@ func (server *Server) Init() error {
 		case "verified":
 			server.Discord.State.RoleAdd(server.Guild.ID, role)
 			server.Roles.Verified, err = server.Discord.State.Role(server.Guild.ID, role.ID)
+		case "accepterat_reglerna":
+			server.Discord.State.RoleAdd(server.Guild.ID, role)
+			server.Roles.AcceptedRules, err = server.Discord.State.Role(server.Guild.ID, role.ID)
 		}
 
 		if err != nil {
@@ -137,7 +141,7 @@ func (server *Server) Init() error {
 		server.Channels.Bot == nil ||
 		server.Channels.Regler == nil ||
 		server.Roles.Admin == nil ||
-		server.Roles.Verified == nil {
+		server.Roles.Verified == nil || server.Roles.AcceptedRules == nil {
 		return errors.New("could not find channels or roles")
 	}
 
@@ -180,10 +184,7 @@ func (server *Server) InitRules() error {
 	var err error
 
 	for {
-		messages, err := server.Discord.ChannelMessages(server.Channels.Regler.ID, 100, "", "", "")
-		if err != nil {
-			return err
-		}
+		messages, _ := server.Discord.ChannelMessages(server.Channels.Regler.ID, 100, "", "", "")
 
 		var messagesID []string
 
@@ -191,10 +192,7 @@ func (server *Server) InitRules() error {
 			messagesID = append(messagesID, message.ID)
 		}
 
-		err = server.Discord.ChannelMessagesBulkDelete(server.Channels.Regler.ID, messagesID)
-		if err != nil {
-			return err
-		}
+		server.Discord.ChannelMessagesBulkDelete(server.Channels.Regler.ID, messagesID)
 
 		if len(messages) <= 100 {
 			break
@@ -216,22 +214,14 @@ func (server *Server) InitRules() error {
 	thinkAbout.AddField("__**Använd rätt kanal**__", " Vi har försökt strukturera kanalerna efter ämne, men om du inte känner att något passar kan du antingen skriva till oss eller skriva i #general.\n")
 	thinkAbout.AddField("__**Var gärna tydlig med din nivå**__", "Som nybörjare kan en få mycket hjälp genom att förtydliga att en är ny till vissa områden. Som erfaren kan en känna sig osäker om ens korrespondent egentligen kan mycket mer än en tror!\n")
 
-	reactionator := pkg.NewReactionator(server.Channels.Regler.ID, server.Discord, &server.ReactionListener, false, false, pkg.ReactionatorTypeController, nil)
+	reactionator := pkg.NewReactionator(server.Channels.Regler.ID, server.Discord, &server.ReactionListener, false, true, pkg.ReactionatorTypeController, nil)
 	err = reactionator.AddDefaultPage("", "__**TRYCK PÅ DEN GRÖNA KNAPPEN UNDER MEDDELANDET FÖR ATT GODKÄNNA REGLERNA OCH DÄRMED KUNNA SKRIVA OCH DELTA I SAMTAL**__")
 	if err != nil {
 		return err
 	}
 
 	err = reactionator.Add("✅", func(message *discordgo.MessageReaction) {
-		var medlemRoleID string
-
-		for _, role := range server.Guild.Roles {
-			if role.Name == "accepterat_reglerna" {
-				medlemRoleID = role.ID
-			}
-		}
-
-		server.Discord.GuildMemberRoleAdd(server.Guild.ID, message.UserID, medlemRoleID)
+		server.Discord.GuildMemberRoleAdd(server.Guild.ID, message.UserID, server.Roles.AcceptedRules.ID)
 	})
 
 	if err != nil {

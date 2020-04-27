@@ -17,6 +17,12 @@ func MessageHandler(server *internal.Server) func(*discordgo.Session, *discordgo
 			return
 		}
 
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("%v | RECOVERED ANNA FROM %v\n", time.Now().Format("2006-01-02 15:04:05"), r)
+			}
+		}()
+
 		channel, err := discord.State.Channel(message.ChannelID)
 		if err != nil {
 			log.Println("Error getting channel,", err)
@@ -83,6 +89,7 @@ func MessageHandler(server *internal.Server) func(*discordgo.Session, *discordgo
 
 				discord.ChannelMessageSend(message.ChannelID, replyMessage)
 			}
+
 			return
 		}
 

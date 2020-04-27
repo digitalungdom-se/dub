@@ -55,7 +55,7 @@ type (
 func NewController(discord *discordgo.Session, channel *discordgo.Channel, previousStatus *discordgo.UpdateStatusData, reactionListener *ReactionListener) (*Controller, error) {
 	var err error
 	controller := new(Controller)
-	
+
 	controller.discord = discord
 	controller.channel = channel
 	controller.previousStatus = previousStatus
@@ -143,7 +143,7 @@ func (controller *Controller) AddToQueue(context *Context) error {
 		return nil
 	}
 
-	videoInfo, err := ytdl.GetVideoInfo(songURL)
+	videoInfo, err := ytdl.GetVideoInfo(u)
 	if err != nil {
 		return err
 	}
@@ -228,20 +228,15 @@ func (controller *Controller) PauseResume() {
 
 func (controller *Controller) NewControllerMessage(reactionListener *ReactionListener) error {
 	for {
-		messages, err := controller.discord.ChannelMessages(controller.channel.ID, 100, "", "", "")
-		if err != nil {
-			return err
-		}
+		messages, _ := controller.discord.ChannelMessages(controller.channel.ID, 100, "", "", "")
+
 		var messagesID []string
 
 		for _, message := range messages {
 			messagesID = append(messagesID, message.ID)
 		}
 
-		err = controller.discord.ChannelMessagesBulkDelete(controller.channel.ID, messagesID)
-		if err != nil {
-			return err
-		}
+		controller.discord.ChannelMessagesBulkDelete(controller.channel.ID, messagesID)
 
 		if len(messages) <= 100 {
 			break

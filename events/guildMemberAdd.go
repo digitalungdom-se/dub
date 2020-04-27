@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/digitalungdom-se/dub/internal"
@@ -12,6 +13,12 @@ import (
 
 func GuildMemberAddHandler(server *internal.Server) func(*discordgo.Session, *discordgo.GuildMemberAdd) {
 	return func(discord *discordgo.Session, member *discordgo.GuildMemberAdd) {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("%v | RECOVERED ANNA FROM %v\n", time.Now().Format("2006-01-02 15:04:05"), r)
+			}
+		}()
+
 		gifbuff, err := pkg.NameToGif(member.User.Username, member.User.AvatarURL("128"))
 		if err != nil {
 			log.Print("Error creating user gif:", err)
