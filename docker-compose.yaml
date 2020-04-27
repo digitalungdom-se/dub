@@ -4,6 +4,6 @@ services:
     build:
       context: ./
     container_name: dub
-    restart: never
+    restart: always
     network_mode: 'host'
     env_file: '.env'
