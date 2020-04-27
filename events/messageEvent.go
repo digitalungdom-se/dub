@@ -73,14 +73,16 @@ func MessageHandler(server *internal.Server) func(*discordgo.Session, *discordgo
 		command, found := server.CommandHandler.GetCommand(commandName)
 
 		if !found {
-			replyMessage := "Kunde inte hitta kommandot. Testa `$help` för att se alla kommandon."
+			if !mentionsMe {
 
-			if channel.Type == discordgo.ChannelTypeGuildText {
-				replyMessage = message.Author.Mention() + ", " + strings.ToLower(string(replyMessage[0])) + replyMessage[1:]
+				replyMessage := "Kunde inte hitta kommandot. Testa `$help` för att se alla kommandon."
+
+				if channel.Type == discordgo.ChannelTypeGuildText {
+					replyMessage = message.Author.Mention() + ", " + strings.ToLower(string(replyMessage[0])) + replyMessage[1:]
+				}
+
+				discord.ChannelMessageSend(message.ChannelID, replyMessage)
 			}
-
-			discord.ChannelMessageSend(message.ChannelID, replyMessage)
-
 			return
 		}
 
