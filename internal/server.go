@@ -214,7 +214,7 @@ func (server *Server) InitRules() error {
 	thinkAbout.AddField("__**Sveriges rikes lag gäller**__", "Använd sunt förnuft för att bedöma om ditt beteende är lämpligt. Om ditt beteende bryter mot någon lag så kan du både bli straffad av oss och prövad i en svensk domstol. Ett exempel på olämpligt och olagligt beteende är att hacka någon. Vi vill heller inte att du uppmuntrar sådant beteende!\n")
 
 	punishment := pkg.NewEmbed()
-	punishment.SetTitle("Hur upprätthåller vi reglerna...")
+	punishment.SetTitle("Hur vi upprätthåller reglerna...")
 	punishment.SetColor(15105570) // orange color
 	punishment.AddField("Om du bryter mot någon av våra regler så kommer det att få olika konsekvenser beroende på hur många gånger du har gjort det.", "1. En gång = vänlig varning om att inte bryta reglerna igen.\n2. Två gånger = du kommer inte att kunna skriva meddelanden eller prata i röstkanaler i 3 dagar.\n3. Tre gånger = du blir mute:ad i 1 vecka.\n4. Fler än fyra gånger = styrelsen ser över situationen.")
 
