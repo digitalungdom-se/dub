@@ -234,6 +234,7 @@ func (server *Server) InitRules() error {
 
 	server.Discord.ChannelMessageSendEmbed(server.Channels.Regler.ID, rulesEmbed.MessageEmbed)
 	server.Discord.ChannelMessageSendEmbed(server.Channels.Regler.ID, thinkAbout.MessageEmbed)
+	server.Discord.ChannelMessageSendEmbed(server.Channels.Regler.ID, punishment.MessageEmbed)
 	err = reactionator.Initiate()
 
 	return err
