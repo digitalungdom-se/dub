@@ -202,7 +202,7 @@ func (server *Server) InitRules() error {
 	rulesEmbed.AddField("__**Använd ditt förnamn**__", "Vi vill gärna skapa en personlig miljö. Använd `/nick`-kommandot. Du kan behålla ditt alias genom ex. `/nick Nikolaus (Jultomten)`.\n")
 	rulesEmbed.AddField("__**Gyllene regeln**__", "Gör mot andra som du själv vill bli behandlad.\n")
 	rulesEmbed.AddField("__**Inget stötande beteende.**__", "- Skicka inget rasistiskt, sexistiskt, sexualiserande, aggressiva eller i övrigt diskriminerande innehåll.\n- Inget spam.\n- Undvik gärna svordomar.")
-	rulesEmbed.AddField("__**Provocera eller hetsa inte någon.**__", "- Försök att inte vara ett internettroll provocerar fram exempelvis känslomässiga svar, gräl, missförstånd eller utdragna ofruktbara diskussioner som inte leder någon vart.")
+	rulesEmbed.AddField("__**Provocera eller hetsa inte någon**__", "- Försök att inte vara ett internettroll som provocerar fram exempelvis känslomässiga svar, gräl, missförstånd eller utdragna ofruktbara diskussioner som inte leder någon vart.")
 	rulesEmbed.AddField("__**Doxa inte.**__", "- Leta inte reda på och publicera privat eller känslig personlig information om en individ.")
 
 	thinkAbout := pkg.NewEmbed()
