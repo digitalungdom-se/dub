@@ -216,7 +216,11 @@ func (server *Server) InitRules() error {
 	punishment := pkg.NewEmbed()
 	punishment.SetTitle("Hur vi upprätthåller reglerna...")
 	punishment.SetColor(15105570) // orange color
-	punishment.AddField("Om du bryter mot någon av våra regler så kommer det att få olika konsekvenser beroende på hur många gånger du har gjort det.", "1. En gång = vänlig varning om att inte bryta reglerna igen.\n2. Två gånger = du kommer inte att kunna skriva meddelanden eller prata i röstkanaler i 3 dagar.\n3. Tre gånger = du blir mute:ad i 1 vecka.\n4. Fler än fyra gånger = styrelsen ser över situationen.")
+	punishment.SetDescription("Om du bryter mot någon av våra regler så kommer det att få olika konsekvenser beroende på hur många gånger du har gjort det.")
+	punishment.AddField("En gång", "Vänlig varning om att inte bryta reglerna igen.")
+	punishment.AddField("Två gånger", "Du kommer inte att kunna skriva meddelanden eller prata i röstkanaler i 3 dagar.")
+	punishment.AddField("Tre gånger", "Du blir mute:ad i 1 vecka.")
+	punishment.AddField("Fler än tre gånger", "Styrelsen ser över situationen.")
 
 	reactionator := pkg.NewReactionator(server.Channels.Regler.ID, server.Discord, &server.ReactionListener, false, true, pkg.ReactionatorTypeController, nil)
 	err = reactionator.AddDefaultPage("", "__**TRYCK PÅ DEN GRÖNA KNAPPEN UNDER MEDDELANDET FÖR ATT GODKÄNNA REGLERNA OCH DÄRMED KUNNA SKRIVA OCH DELTA I SAMTAL**__")
