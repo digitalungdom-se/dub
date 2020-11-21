@@ -201,7 +201,9 @@ func (server *Server) InitRules() error {
 	rulesEmbed.AddField("__**Du måste vara medlem i Digital Ungdom**__", "Bli medlem här: https://digitalungdom.se/bli-medlem.\n")
 	rulesEmbed.AddField("__**Använd ditt förnamn**__", "Vi vill gärna skapa en personlig miljö. Använd `/nick`-kommandot. Du kan behålla ditt alias genom ex. `/nick Nikolaus (Jultomten)`.\n")
 	rulesEmbed.AddField("__**Gyllene regeln**__", "Gör mot andra som du själv vill bli behandlad.\n")
-	rulesEmbed.AddField("__**Inget stötande beteende.**__", "- Inga rasistiska, sexistiska, eller aggressiva kommentarer.\n- Inget spam.\n- Undvik gärna svordomar.")
+	rulesEmbed.AddField("__**Inget stötande beteende.**__", "- Skicka inget rasistiskt, sexistiskt, sexualiserande, aggressiva eller i övrigt diskriminerande innehåll.\n- Inget spam.\n- Undvik gärna svordomar.")
+	rulesEmbed.AddField("__**Provocera eller hetsa inte någon**__", "- Försök att inte vara ett internettroll som provocerar fram exempelvis känslomässiga svar, gräl, missförstånd eller utdragna ofruktbara diskussioner som inte leder någon vart.")
+	rulesEmbed.AddField("__**Doxa inte.**__", "- Leta inte reda på och publicera privat eller känslig personlig information om en individ.")
 
 	thinkAbout := pkg.NewEmbed()
 	thinkAbout.SetTitle("Tänk på...")
@@ -209,6 +211,16 @@ func (server *Server) InitRules() error {
 	thinkAbout.AddField("__**Undvik elitism**__", " Var upplyftande gentemot nybörjare! Alla vill lära sig mer och det blir roligare om vi bidrar till varandras utveckling och framsteg. Försök att inte överväldiga nybörjare med en onödigt teknisk jargong.\n")
 	thinkAbout.AddField("__**Använd rätt kanal**__", " Vi har försökt strukturera kanalerna efter ämne, men om du inte känner att något passar kan du antingen skriva till oss eller skriva i #general.\n")
 	thinkAbout.AddField("__**Var gärna tydlig med din nivå**__", "Som nybörjare kan en få mycket hjälp genom att förtydliga att en är ny till vissa områden. Som erfaren kan en känna sig osäker om ens korrespondent egentligen kan mycket mer än en tror!\n")
+	thinkAbout.AddField("__**Sveriges rikes lag gäller**__", "Använd sunt förnuft för att bedöma om ditt beteende är lämpligt. Om ditt beteende bryter mot någon lag så kan du både bli straffad av oss och prövad i en svensk domstol. Ett exempel på olämpligt och olagligt beteende är att hacka någon. Vi vill heller inte att du uppmuntrar sådant beteende!\n")
+
+	punishment := pkg.NewEmbed()
+	punishment.SetTitle("Hur vi upprätthåller reglerna...")
+	punishment.SetColor(15105570) // orange color
+	punishment.SetDescription("Om du bryter mot någon av våra regler så kommer det att få olika konsekvenser beroende på hur många gånger du har gjort det.")
+	punishment.AddField("En gång", "Vänlig varning om att inte bryta reglerna igen.")
+	punishment.AddField("Två gånger", "Du kommer inte att kunna skriva meddelanden eller prata i röstkanaler i 3 dagar.")
+	punishment.AddField("Tre gånger", "Du blir mute:ad i 1 vecka.")
+	punishment.AddField("Fler än tre gånger", "Styrelsen ser över situationen.")
 
 	reactionator := pkg.NewReactionator(server.Channels.Regler.ID, server.Discord, &server.ReactionListener, false, true, pkg.ReactionatorTypeController, nil)
 	err = reactionator.AddDefaultPage("", "__**TRYCK PÅ DEN GRÖNA KNAPPEN UNDER MEDDELANDET FÖR ATT GODKÄNNA REGLERNA OCH DÄRMED KUNNA SKRIVA OCH DELTA I SAMTAL**__")
@@ -226,6 +238,7 @@ func (server *Server) InitRules() error {
 
 	server.Discord.ChannelMessageSendEmbed(server.Channels.Regler.ID, rulesEmbed.MessageEmbed)
 	server.Discord.ChannelMessageSendEmbed(server.Channels.Regler.ID, thinkAbout.MessageEmbed)
+	server.Discord.ChannelMessageSendEmbed(server.Channels.Regler.ID, punishment.MessageEmbed)
 	err = reactionator.Initiate()
 
 	return err
